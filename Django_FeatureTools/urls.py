@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from ft_model.views import index
+from ft_model.views import get_results
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'index', index),
+    path('index/', index),
+    path('get_results/', get_results),
 ]

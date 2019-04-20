@@ -1,11 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% for i in  %}
-{{  }}
-</body>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>A AWESOME WEB !</title>
+    <link rel="stylesheet" href="../ft_model/static/semantic.css">
+    <script src="../ft_model/static/js/jquery.min.js"></script>
+    <script src="../ft_model/static/js/semantic.js"></script>
+
+  </head>
+  <body>
+
+              <form  action="/get_results/" method="post">
+                  {% csrf_token %}
+
+                max_depth: <input type="text" name="depth"><br>
+
+                agg_pri:
+                <input type="checkbox" name="agg_pri" value="mean">mean
+
+                <input type="checkbox" name="agg_pri" value="sum">sum
+
+                <input type="checkbox" name="agg_pri" value="mode">mode
+                <br>
+
+               trans_pri:
+                <input type="checkbox" name="trans_pri" value="month">month
+
+                <input type="checkbox" name="trans_pri" value="hour">hour
+                <br>
+
+                <input type="submit" value="提交">
+
+             </form>
+  </body>
 </html>
