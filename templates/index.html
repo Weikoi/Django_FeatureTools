@@ -9,28 +9,52 @@
 
   </head>
   <body>
+    <div class="ui menu">
+        <div class="header item" id="menu">
+            Home Page
+        </div>
 
-              <form  action="/get_results/" method="post">
-                  {% csrf_token %}
+    </div>
+      <form  action="/get_results/" method="post">
+          {% csrf_token %}
+            <br>
+          <div class="ui three column grid">
+              <div class="column"></div>
+              <div class="column">
+                  max_depth: <input type="text" name="depth"><br>
+              </div>
+              <div class="column"></div>
+          </div>
 
-                max_depth: <input type="text" name="depth"><br>
+          <br>
+          <div class="ui three column grid">
+              <div class="column"></div>
+              <div class="column">
+                  agg_pri:
+                    <input type="checkbox"  name="agg_pri" value="mean">mean
 
-                agg_pri:
-                <input type="checkbox" name="agg_pri" value="mean">mean
+                    <input type="checkbox" name="agg_pri" value="sum">sum
 
-                <input type="checkbox" name="agg_pri" value="sum">sum
+                    <input type="checkbox" name="agg_pri" value="mode">mode
+                    <br>
+              </div>
+              <div class="column"></div>
+          </div>
 
-                <input type="checkbox" name="agg_pri" value="mode">mode
-                <br>
+          <div class="ui three column grid">
+              <div class="column"></div>
+              <div class="column">
+                   trans_pri:
+                    <input type="checkbox" name="trans_pri" value="month">month
 
-               trans_pri:
-                <input type="checkbox" name="trans_pri" value="month">month
-
-                <input type="checkbox" name="trans_pri" value="hour">hour
-                <br>
-
-                <input type="submit" value="提交">
-
-             </form>
+                    <input type="checkbox" name="trans_pri" value="hour">hour
+                    <br>
+                    <br>
+                    <input type="submit" value="提交">
+                    <br>
+              </div>
+              <div class="column"></div>
+          </div>
+     </form>
   </body>
 </html>
