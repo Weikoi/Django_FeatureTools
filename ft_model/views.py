@@ -9,13 +9,11 @@ def index(request):
 
 # 函数postTest2用来处理表单提交后服务器响应的结果
 def get_results(request):
-
     max_depth = request.POST['depth']
     agg_pri = request.POST.getlist('agg_pri')
     trans_pri = request.POST.getlist('trans_pri')
 
     context = {'max_depth': max_depth, 'agg_pri': agg_pri, 'trans_pri': trans_pri}
-
 
     import featuretools as ft
     import pandas as pd
@@ -63,4 +61,4 @@ def get_results(request):
     for i in feature_defs3:
         res.append(str(i))
 
-    return render(request, 'get_results.html', {'res':res})
+    return render(request, 'get_results.html', {'res': res})
