@@ -1,0 +1,34 @@
+<!DOCTYPE html >
+
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>A AWESOME WEB !</title>
+        <link rel="stylesheet" href="../static/semantic.css">
+        <script src="../static/js/jquery.min.js"></script>
+        <script src="../static/semantic.js"></script>
+        <meta charset="utf-8">
+        <title>Title</title>
+    </head>
+    <body>
+        <div class="ui inverted menu">
+            <div class="header item" id="menu">
+                生成特征页面
+            </div>
+        </div>
+
+        <div class="ui three column grid">
+            <div class="column"></div>
+            <div class="column">
+            生成的特征为:<br><br>
+                {% for result in res %}
+                    {{ result }}<br><br>
+                {% endfor %}
+                <br>
+            </div>
+            <div class="column"></div>
+        </div>
+
+    </body>
+</html>
