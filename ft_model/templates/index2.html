@@ -10,43 +10,52 @@
 </head>
  
 <body>
-	    <div class="ui inverted menu">
-        <div class="header item" id="menu">
-            参数配置页面
-        </div>
-
-    </div>
     <div class="main">
         <!-----start-main---->
-
+        <br>
+        <br>
+        <br>
+        <br>
         <h1 align="center" style="color: white;font-size: 30px;">参数配置表单</h1>
+        <br>
+        <br>
+        <br>
+        <br>
         <form action="/get_results/" method="post">
             {% csrf_token %}
+            <p align="center">max_depth:</p>
             <div class="lable">
-                <input type="text" class="text" value="Max_Depth" onfocus="this.value = '';"
-                       onblur="if (this.value == '') {this.value = 'Max_Depth';}" >
+                <div style="display: flex;justify-content: center;">
+                    <input type="text" style="text-align:center " name="max_depth" class="text" value="请输入特征融合深度" onfocus="this.value = '';"
+                           onblur="if (this.value == '') {this.value = '请输入特征融合深度';}">
+                </div>
             </div>
+            <br>
             <div class="clear"></div>
             <div class="lable">
-                <p style="color: white">agg_pri:</p><br>
-                <input style="color: white" type="checkbox" name="agg_pri" value="mean">mean
+                <p align="center">agg_pri:</p><br>
+                <div align="center">
+                    <input type="checkbox" name="agg_pri" value="mean">mean
 
-                <input type="checkbox" name="agg_pri" value="sum">sum
+                    <input type="checkbox" name="agg_pri" value="sum">sum
 
-                <input type="checkbox" name="agg_pri" value="mode">mode
+                    <input type="checkbox" name="agg_pri" value="mode">mode
+                </div>
             </div>
-            <div class="clear"></div>
+
             <br>
             <br>
             <div class="column">
-                <p>trans_pri:</p><br>
-                <input type="checkbox" name="trans_pri" value="month">month
+                <p align="center">trans_pri:</p><br>
+                <div align="center">
+                    <input type="checkbox" name="trans_pri" value="month">month
 
-                <input type="checkbox" name="trans_pri" value="hour">hour
+                    <input type="checkbox" name="trans_pri" value="hour">hour
+                </div>
                 <br>
                 <br>
             </div>
-            <div class="submit">
+            <div class="submit" style="display: flex;justify-content: center;">
                 <input type="submit" value="提交参数">
             </div>
             <div class="clear"></div>

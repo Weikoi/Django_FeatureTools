@@ -4,12 +4,12 @@ from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
-    return render(request, "index.html")
+    return render(request, "index2.html")
 
 
 # 函数postTest2用来处理表单提交后服务器响应的结果
 def get_results(request):
-    max_depth = request.POST['depth']
+    max_depth = request.POST['max_depth']
     agg_pri = request.POST.getlist('agg_pri')
     trans_pri = request.POST.getlist('trans_pri')
 

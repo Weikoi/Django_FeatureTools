@@ -11,51 +11,47 @@
 
 </head>
 <body>
-    <div class="ui inverted menu">
-        <div class="header item" id="menu">
-            参数配置页面
-        </div>
-
-    </div>
-    <form action="/get_results/" method="post">
-        {% csrf_token %}
-        <br>
-        <div class="ui three column grid">
-            <div class="column"></div>
-            <div class="column">
-                max_depth: <input type="text" name="depth"><br>
+    <form  action="/get_results/" method="post">
+        <div class="form_demo">
+            {% csrf_token %}
+            <br>
+            <div class="ui three column grid">
+                <div class="column"></div>
+                <div class="column">
+                    max_depth: <input type="text" name="depth"><br>
+                </div>
+                <div class="column"></div>
             </div>
-            <div class="column"></div>
-        </div>
 
-        <br>
-        <div class="ui three column grid">
-            <div class="column"></div>
-            <div class="column">
-                agg_pri:
-                <input type="checkbox" name="agg_pri" value="mean">mean
+            <br>
+            <div class="ui three column grid">
+                <div class="column"></div>
+                <div align="center" class="column">
+                    agg_pri:
+                    <input type="checkbox" name="agg_pri" value="mean">mean
 
-                <input type="checkbox" name="agg_pri" value="sum">sum
+                    <input type="checkbox" name="agg_pri" value="sum">sum
 
-                <input type="checkbox" name="agg_pri" value="mode">mode
-                <br>
+                    <input type="checkbox" name="agg_pri" value="mode">mode
+                    <br>
+                </div>
+                <div class="column"></div>
             </div>
-            <div class="column"></div>
-        </div>
 
-        <div class="ui three column grid">
-            <div class="column"></div>
-            <div class="column">
-                trans_pri:
-                <input type="checkbox" name="trans_pri" value="month">month
+            <div class="ui three column grid">
+                <div class="column"></div>
+                <div class="column">
+                    trans_pri:
+                    <input type="checkbox" name="trans_pri" value="month">month
 
-                <input type="checkbox" name="trans_pri" value="hour">hour
-                <br>
-                <br>
-                <input type="submit" value="提交">
-                <br>
+                    <input type="checkbox" name="trans_pri" value="hour">hour
+                    <br>
+                    <br>
+                    <input type="submit" value="提交">
+                    <br>
+                </div>
+                <div class="column"></div>
             </div>
-            <div class="column"></div>
         </div>
     </form>
 </body>

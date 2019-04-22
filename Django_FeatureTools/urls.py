@@ -21,5 +21,6 @@ from ft_model.views import get_results
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', index),
+    path('', index),
     path('get_results/', get_results),
 ]
