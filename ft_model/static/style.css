@@ -291,10 +291,37 @@ input[type=submit] {
     -ms-transition: all 0.5s ease-out;
     -o-transition: all 0.5s ease-out;
     outline: none;
-    width: 30%;
+    width: 100%;
 }
 
 .submit input[type=submit]:hover {
+    background: #07793D;
+    border: 1px solid #07793D;
+}
+.reset {
+    padding: 5px 4px;
+}
+
+input[type=reset] {
+    padding: 17px 30px;
+    color: #fff;
+    float: right;
+    border-radius: 10px;
+    font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #40A46F;
+    border: 1px solid #40A46F;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.5s ease-out;
+    -webkit-transition: all 0.5s ease-out;
+    -moz-transition: all 0.5s ease-out;
+    -ms-transition: all 0.5s ease-out;
+    -o-transition: all 0.5s ease-out;
+    outline: none;
+    width: 100%;
+}
+
+.reset input[type=reset]:hover {
     background: #07793D;
     border: 1px solid #07793D;
 }

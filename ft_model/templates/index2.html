@@ -18,7 +18,7 @@
         <br>
         <h1 align="center" style="font-size: 40px;">参数配置表单</h1>
         <br>
-        <br>
+        <hr>
         <br>
         <form action="/get_results/" method="post">
             {% csrf_token %}
@@ -60,16 +60,23 @@
                 <br>
                 <br>
             </div>
-            <div class="submit" style="display: flex;justify-content: center;">
-                <input type="submit" value="提交参数">
+            <div  style="display: flex;justify-content: center;">
+                <div class="submit">
+                    <input type="submit" value="提交参数">
+                </div>
+                <div class="reset">
+                    <input type="reset" value="重置参数">
+                </div>
+
             </div>
+
             <div class="clear"></div>
         </form>
         <!-----//end-main---->
     </div>
     <!-----start-copyright---->
     <div class="copy-right">
-        <a href="http://www.cssmoban.com/" target="_blank">@copyright</a>
+        <a href="#" target="_blank">@copyright</a>
     </div>
     <!-----//end-copyright---->
 
