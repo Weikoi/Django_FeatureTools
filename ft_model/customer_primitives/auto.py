@@ -1,9 +1,9 @@
 #%% md
-aggregation primitive
+# aggregation primitive
 #%%
 from featuretools.variable_types import (Index, Numeric, Discrete, Boolean,
                                          DatetimeTimeIndex, Variable)
-from .aggregation_primitive_base import (AggregationPrimitive,
+from featuretools.primitives import (AggregationPrimitive,
                                          make_agg_primitive)
 import numpy as np
 import pandas as pd
@@ -457,9 +457,9 @@ def find_dividend_by_unit(time):
             return dividend
     return 1
 #%% md
-transform primitive
+# transform primitive
 #%%
-rom .primitive_base import PrimitiveBase
+from .primitive_base import PrimitiveBase
 from .utils import inspect_function_args
 from featuretools.variable_types import (Discrete, Numeric, Boolean,
                                          Ordinal, Datetime, Timedelta,
