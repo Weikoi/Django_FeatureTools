@@ -48,9 +48,9 @@
                 <input type="checkbox" name="agg_pri" value="Std">Std,
                 <input type="checkbox" name="agg_pri" value="Median">Median,
                 <input type="checkbox" name="agg_pri" value="Mode">Mode,
-                <input type="checkbox" name="agg_pri" value="Avg_time_between">avg_time_between,
-                <input type="checkbox" name="agg_pri" value="Time_since_last">time_since_last,<br>
-                <input type="checkbox" name="agg_pri" value="Time_since_first">time_since_first,
+                <input type="checkbox" name="agg_pri" value="Avg_time_between">Avg_time_between,
+                <input type="checkbox" name="agg_pri" value="Time_since_last">Time_since_last,<br>
+                <input type="checkbox" name="agg_pri" value="Time_since_first">Time_since_first,
                 <input type="checkbox" name="agg_pri" value="num_unique">Unique,
                 <input type="checkbox" name="agg_pri" value="percent_true">PercentTrue,
                 <input type="checkbox" name="agg_pri" value="all">All,
@@ -62,7 +62,13 @@
         </div>
 
         <br>
-        <br>
+        <div class="column">
+            <p align="center">agg_pri_customer:</p><br>
+            <div align="center">
+                <input type="checkbox" name="agg_pri_customer" value="Time_since_last_by_hour">Time_since_last_by_hour
+            </div>
+            <br>
+        </div>
         <div class="column">
             <p align="center">trans_pri:</p><br>
             <div align="center">
@@ -71,8 +77,17 @@
                 <input type="checkbox" name="trans_pri" value="hour">hour
             </div>
             <br>
+        </div>
+
+        <br>
+        <div class="column">
+            <p align="center">trans_pri_customer:</p><br>
+            <div align="center">
+                <input type="checkbox" name="trans_pri_customer" value="log_e">log_e
+            </div>
             <br>
         </div>
+
         <div style="display: flex;justify-content: center;">
             <div class="submit">
                 <input type="submit" value="提交参数">

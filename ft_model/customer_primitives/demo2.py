@@ -37,9 +37,18 @@ Time_since_last_by_hour = make_agg_primitive(function=time_since_last_by_hour,
                                              return_type=Numeric,
                                              uses_calc_time=True)
 
+import math
+import numpy as np
+log_e = make_trans_primitive(function=np.log,
+                             input_types=[Numeric],
+                             return_type=Numeric,
+                             # uses_calc_time=True,
+                             description="Calculates the log of the value.")
+
+
 feature_matrix3, feature_defs3 = ft.dfs(entityset=es, target_entity="customers",
-                                        agg_primitives=[Time_since_last_by_hour],
-                                        # trans_primitives=context['trans_pri'],
+                                        # agg_primitives=[Time_since_last_by_hour],
+                                        trans_primitives=[log_e],
                                         max_depth=int(2))
 
-# print(feature_matrix3)
+print(feature_matrix3)
