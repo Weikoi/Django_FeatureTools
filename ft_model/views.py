@@ -80,13 +80,20 @@ def get_results(request):
     自定义trans_primitives:
     添加log e 的自然对数
     """
-    import math
-    log_e = make_trans_primitive(function=math.log,
-                                 input_types=[Numeric],
-                                 return_type=Numeric,
-                                 # uses_calc_time=True,
-                                 description="Calculates the log of the value.",
-                                 name="log_e")
+    import numpy as np
+
+    def log(vals):
+        return np.log(vals)
+
+    # def generate_name(self, base_feature_names):
+    #     return "-(%s)" % (base_feature_names[0])
+
+    log = make_trans_primitive(function=log,
+                               input_types=[Numeric],
+                               return_type=Numeric,
+                               # uses_calc_time=True,
+                               description="Calculates the log of the value.",
+                               name="log")
 
     # 将前端页面的提交参数，保存为agg_pri列表
     agg_pri = context['agg_pri']
@@ -96,7 +103,7 @@ def get_results(request):
     if 'Time_since_last_by_hour' in agg_pri_customer:
         agg_pri.append(Time_since_last_by_hour)
     if 'log_e' in trans_pri_customer:
-        trans_pri.append(log_e)
+        trans_pri.append(log)
 
     # 生成新的特征融合矩阵
     feature_matrix3, feature_defs3 = ft.dfs(entityset=es, target_entity="customers",

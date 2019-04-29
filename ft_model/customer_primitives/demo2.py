@@ -25,7 +25,7 @@ es = ft.demo.load_mock_customer(return_entityset=True)
 
 
 def time_since_last_by_hour(values, time=None):
-    print(type(values))
+    # print(type(values))
     # print(values.iloc[-1])
     time_since = time - values.iloc[-1]
     return time_since.total_seconds() / 3600
@@ -37,18 +37,26 @@ Time_since_last_by_hour = make_agg_primitive(function=time_since_last_by_hour,
                                              return_type=Numeric,
                                              uses_calc_time=True)
 
-import math
 import numpy as np
-log_e = make_trans_primitive(function=np.log,
-                             input_types=[Numeric],
-                             return_type=Numeric,
-                             # uses_calc_time=True,
-                             description="Calculates the log of the value.")
 
+
+def log(vals):
+    return np.log(vals)
+
+
+# def generate_name(self, base_feature_names):
+#     return "-(%s)" % (base_feature_names[0])
+
+log = make_trans_primitive(function=log,
+                           input_types=[Numeric],
+                           return_type=Numeric,
+                           # uses_calc_time=True,
+                           description="Calculates the log of the value.",
+                           name="log")
 
 feature_matrix3, feature_defs3 = ft.dfs(entityset=es, target_entity="customers",
                                         # agg_primitives=[Time_since_last_by_hour],
-                                        trans_primitives=[log_e],
+                                        trans_primitives=[log],
                                         max_depth=int(2))
 
 print(feature_matrix3)
