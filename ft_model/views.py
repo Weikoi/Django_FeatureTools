@@ -66,7 +66,6 @@ def get_results(request):
     自定义agg_primitives:
     改写time since last，原函数为秒，现在改为小时输出
     """
-
     def time_since_last_by_hour(values, time=None):
         time_since = time - values.iloc[-1]
         return time_since.total_seconds() / 3600
@@ -87,7 +86,6 @@ def get_results(request):
 
     # def generate_name(self, base_feature_names):
     #     return "-(%s)" % (base_feature_names[0])
-
     log = make_trans_primitive(function=log,
                                input_types=[Numeric],
                                return_type=Numeric,
@@ -104,7 +102,6 @@ def get_results(request):
         agg_pri.append(Time_since_last_by_hour)
     if 'log_e' in trans_pri_customer:
         trans_pri.append(log)
-
     # 生成新的特征融合矩阵
     feature_matrix3, feature_defs3 = ft.dfs(entityset=es, target_entity="customers",
                                             agg_primitives=agg_pri,

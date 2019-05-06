@@ -470,7 +470,7 @@ import pandas as pd
 import numpy as np
 import functools
 current_path = os.path.dirname(os.path.realpath(__file__))
-FEATURE_DATASETS = os.path.join(os.path.join(current_path, '..'),
+FEATURE_DATASETS = os.path.join(os.path.join(current_path, '../..'),
                                 'feature_datasets')
 
 

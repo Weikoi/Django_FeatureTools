@@ -5,6 +5,8 @@ import pandas as pd
 
 pd.set_option('display.max_columns', 20)
 
+es = ft.demo.load_mock_customer(return_entityset=True)
+
 
 class TimeSinceLast(AggregationPrimitive):
     """Time since last related instance."""
@@ -19,9 +21,6 @@ class TimeSinceLast(AggregationPrimitive):
             return time_since.total_seconds()
 
         return time_since_last
-
-
-es = ft.demo.load_mock_customer(return_entityset=True)
 
 
 def time_since_last_by_hour(values, time=None):

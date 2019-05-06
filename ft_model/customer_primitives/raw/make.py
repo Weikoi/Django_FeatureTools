@@ -32,7 +32,7 @@ from featuretools.tests.testing_utils import make_ecommerce_entityset
 es = make_ecommerce_entityset()
 count_the_feat = StringCount(es['log']['comments'], string="the")
 
-# %% md
+
 # 原始日志数据
 # %%
 es['log'].df.head()
