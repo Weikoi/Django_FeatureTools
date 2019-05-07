@@ -1,10 +1,10 @@
-#%% md
+# %% md
 # aggregation primitive
-#%%
+# %%
 from featuretools.variable_types import (Index, Numeric, Discrete, Boolean,
                                          DatetimeTimeIndex, Variable)
 from featuretools.primitives import (AggregationPrimitive,
-                                         make_agg_primitive)
+                                     make_agg_primitive)
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
@@ -35,6 +35,7 @@ class Count(AggregationPrimitive):
                 values = values.fillna(0)
 
             return values.count()
+
         return func
 
     def _get_name(self):
@@ -57,6 +58,7 @@ class Sum(AggregationPrimitive):
     def get_function(self):
         def sum_func(x):
             return np.nan_to_num(x.values).sum(dtype=np.float)
+
         return sum_func
 
 
@@ -82,6 +84,7 @@ class Mode(AggregationPrimitive):
             if x.mode().shape[0] == 0:
                 return np.nan
             return x.mode().iloc[0]
+
         return pd_mode
 
 
@@ -143,6 +146,7 @@ class NumTrue(AggregationPrimitive):
     def get_function(self):
         def num_true(x):
             return np.nan_to_num(x.values).sum()
+
         return num_true
 
 
@@ -160,12 +164,16 @@ class PercentTrue(AggregationPrimitive):
             if len(x) == 0:
                 return np.nan
             return np.nan_to_num(x.values).sum(dtype=np.float) / len(x)
+
         return percent_true
+
 
 '''
 函数应用举例：
 最喜爱的top_n 产品/股票/行业/……
 '''
+
+
 class NMostCommon(AggregationPrimitive):
     """Finds the N most common elements in a categorical feature"""
     name = "n_most_common"
@@ -193,12 +201,16 @@ class NMostCommon(AggregationPrimitive):
     def get_function(self):
         def pd_topn(x, n=self.n):
             return np.array(x.value_counts()[:n].index)
+
         return pd_topn
+
 
 '''
 函数应用举例：
 客户平均登录时长/平均购买**产品间隔/……
 '''
+
+
 class AvgTimeBetween(AggregationPrimitive):
     """Computes the average time between consecutive events
     using the time index of the entity.
@@ -212,6 +224,7 @@ class AvgTimeBetween(AggregationPrimitive):
     name = "avg_time_between"
     input_types = [DatetimeTimeIndex]
     return_type = Numeric
+
     # max_stack_depth = 1
 
     def get_function(self):
@@ -243,6 +256,7 @@ class AvgTimeBetween(AggregationPrimitive):
             # diff_in_seconds = diff_in_ns * 1e-9
             # avg = diff_in_seconds.mean()
             return avg
+
         return pd_avg_time_between
 
 
@@ -251,6 +265,7 @@ class Median(AggregationPrimitive):
     name = "median"
     input_types = [Numeric]
     return_type = None
+
     # max_stack_depth = 2
 
     def get_function(self):
@@ -268,6 +283,7 @@ class Skew(AggregationPrimitive):
     return_type = Numeric
     stack_on = []
     stack_on_self = False
+
     # max_stack_depth = 1
 
     def get_function(self):
@@ -294,17 +310,22 @@ class Last(AggregationPrimitive):
     input_types = [Variable]
     return_type = None
     stack_on_self = False
+
     # max_stack_depth = 1
 
     def get_function(self):
         def pd_last(x):
             return x.iloc[-1]
+
         return pd_last
+
 
 '''
 函数应用举例：
 客户最近一年是否 买过**产品/登录过app/……
 '''
+
+
 class Any(AggregationPrimitive):
     """Test if any value is True"""
     name = "any"
@@ -315,10 +336,13 @@ class Any(AggregationPrimitive):
     def get_function(self):
         return np.any
 
+
 '''
 函数应用举例：
 客户最近n个月连续 买过**产品/登录过app/……
 '''
+
+
 class All(AggregationPrimitive):
     """Test if all values are True"""
     name = "all"
@@ -334,6 +358,8 @@ class All(AggregationPrimitive):
 函数应用举例：
 客户多久没有 买过**产品/登录过app/……
 '''
+
+
 class TimeSinceLast(AggregationPrimitive):
     """Time since last related instance"""
     name = "time_since_last"
@@ -342,7 +368,6 @@ class TimeSinceLast(AggregationPrimitive):
     uses_calc_time = True
 
     def get_function(self):
-
         def time_since_last(values, time=None):
             time_since = time - values.iloc[0]
             return time_since.total_seconds()
@@ -354,6 +379,8 @@ class TimeSinceLast(AggregationPrimitive):
 函数应用举例：
 客户资产下降/上升速度
 '''
+
+
 class Trend(AggregationPrimitive):
     """Calculates the slope of the linear trend of variable overtime"""
     name = "trend"
@@ -395,6 +422,7 @@ class Trend(AggregationPrimitive):
             coefficients = np.polyfit(x, y, 1)
 
             return coefficients[0]
+
         return pd_trend
 
 
@@ -456,9 +484,11 @@ def find_dividend_by_unit(time):
         if round(div) == div:
             return dividend
     return 1
-#%% md
+
+
+# %% md
 # transform primitive
-#%%
+# %%
 from .primitive_base import PrimitiveBase
 from .utils import inspect_function_args
 from featuretools.variable_types import (Discrete, Numeric, Boolean,
@@ -469,6 +499,7 @@ import os
 import pandas as pd
 import numpy as np
 import functools
+
 current_path = os.path.dirname(os.path.realpath(__file__))
 FEATURE_DATASETS = os.path.join(os.path.join(current_path, '../..'),
                                 'feature_datasets')
@@ -568,6 +599,7 @@ def make_trans_primitive(function, input_types, return_type, name=None,
             self.partial = functools.partial(function, **self.kwargs)
             super(TransformPrimitive, self).__init__(
                 self.base_features[0].entity, self.base_features)
+
         new_class.__init__ = new_class_init
         new_class.get_function = lambda self: self.partial
     else:
@@ -629,6 +661,7 @@ class TimeSincePrevious(TransformPrimitive):
             grouped_df = grouped_df.groupby(groupby).diff()
             return grouped_df[bf_name].apply(lambda x:
                                              x.total_seconds())
+
         return pd_diff
 
 
@@ -676,6 +709,7 @@ class Hours(TimedeltaUnitBasePrimitive):
     def get_function(self):
         def pd_hours(array):
             return pd_time_unit("seconds")(pd.TimedeltaIndex(array)) / 3600.
+
         return pd_hours
 
 
@@ -701,6 +735,7 @@ class Minutes(TimedeltaUnitBasePrimitive):
     def get_function(self):
         def pd_minutes(array):
             return pd_time_unit("seconds")(pd.TimedeltaIndex(array)) / 60.
+
         return pd_minutes
 
 
@@ -716,6 +751,7 @@ class Weeks(TimedeltaUnitBasePrimitive):
     def get_function(self):
         def pd_weeks(array):
             return pd_time_unit("days")(pd.TimedeltaIndex(array)) / 7.
+
         return pd_weeks
 
 
@@ -731,6 +767,7 @@ class Months(TimedeltaUnitBasePrimitive):
     def get_function(self):
         def pd_months(array):
             return pd_time_unit("days")(pd.TimedeltaIndex(array)) * (12. / 365)
+
         return pd_months
 
 
@@ -746,6 +783,7 @@ class Years(TimedeltaUnitBasePrimitive):
     def get_function(self):
         def pd_years(array):
             return pd_time_unit("days")(pd.TimedeltaIndex(array)) / 365
+
         return pd_years
 
 
@@ -830,8 +868,8 @@ class DaysSince(TransformPrimitive):
             if time is None:
                 time = datetime.now()
             return pd_time_unit('days')(time - pd.DatetimeIndex(array))
-        return pd_days_since
 
+        return pd_days_since
 
 
 class IsIn(TransformPrimitive):
@@ -852,6 +890,7 @@ class IsIn(TransformPrimitive):
             if list_of_outputs is None:
                 list_of_outputs = []
             return pd.Series(array).isin(list_of_outputs)
+
         return pd_is_in
 
     def _get_name(self):
@@ -881,7 +920,7 @@ class Diff(TransformPrimitive):
 
     def _get_name(self):
         base_features_str = self.base_features[0].get_name() + u" by " + \
-            self.group_feature.get_name()
+                            self.group_feature.get_name()
         return u"%s(%s)" % (self.name.upper(), base_features_str)
 
     def get_function(self):
@@ -892,6 +931,7 @@ class Diff(TransformPrimitive):
                                                  groupby: group_array})
             grouped_df = grouped_df.groupby(groupby).diff()
             return grouped_df[bf_name]
+
         return pd_diff
 
 
@@ -929,5 +969,6 @@ class Percentile(TransformPrimitive):
 def pd_time_unit(time_unit):
     def inner(pd_index):
         return getattr(pd_index, time_unit).values
+
     return inner
-#%%
+# %%
