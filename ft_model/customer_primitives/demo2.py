@@ -109,8 +109,39 @@ max3rd = make_agg_primitive(function=max3rd,
                             input_types=[Numeric],
                             return_type=Numeric,
                             # uses_calc_time=True,
-                            description="Calculates the second max of the value.",
+                            description="Calculates the 3rd max of the value.",
                             name="max3rd")
+
+"""
+自定义rise_count:最近一段时间分成N段，资产呈现上升趋势的次数
+"""
+
+
+def rise_count(vals, n=3):
+    count = 0
+    length = len(vals)
+    start = 0
+    end = 1
+
+    new_s = vals.shift(-1) - vals
+    for _ in range(n):
+        start_flag = length // n * start
+        end_flag = length // n * end
+
+        piece = new_s.iloc[start_flag:end_flag]
+        if (sum(piece) > 0):
+            count += 1
+        start += 1
+        end += 1
+    return count
+
+
+rise_count = make_agg_primitive(function=rise_count,
+                                input_types=[Numeric],
+                                return_type=Numeric,
+                                # uses_calc_time=True,
+                                description="Calculates the rise_count max of the value.",
+                                name="rise_count")
 
 # %%
 
@@ -119,10 +150,11 @@ max3rd = make_agg_primitive(function=max3rd,
 # 生成新的特征融合矩阵
 # 可以根据target_entity的不同生成不同的融合特征矩阵
 """
-feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="products",
-                                      agg_primitives=["median", "count", "num_unique", "max","avg_time_between", max2nd, max3rd],
+feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
+                                      #   agg_primitives=["median", "count", "num_unique", "max","avg_time_between", "n_most_common", max2nd, max3rd],
+                                      agg_primitives=[rise_count],
                                       trans_primitives=["month"],
-                                      max_depth=3)
+                                      max_depth=2)
 
 # %%
 feature_defs
@@ -138,7 +170,7 @@ feature_matrix
 """
 cutoff_times = pd.DataFrame()
 
-cutoff_times['product_id'] = [1, 2, 3, 1]
+cutoff_times['customer_id'] = [1, 2, 3, 1]
 
 cutoff_times['time'] = pd.to_datetime(['2014-1-1 04:00',
                                        '2014-1-1 05:00',
@@ -151,7 +183,8 @@ cutoff_times
 
 # %%
 fm, features = ft.dfs(entityset=es,
-                      target_entity='products',
+                      target_entity='customers',
+                      agg_primitives=[rise_count],
                       cutoff_time=cutoff_times,
                       cutoff_time_in_index=True)
 
@@ -170,9 +203,10 @@ features
 es.add_last_time_indexes()
 window_fm, window_features = ft.dfs(entityset=es,
                                     target_entity="customers",
+                                    agg_primitives=[rise_count],
                                     cutoff_time=cutoff_times,
                                     cutoff_time_in_index=True,
-                                    training_window="1 hour")
+                                    training_window="1 day")
 
 # %%
 window_fm
@@ -184,3 +218,5 @@ es['sessions'].df['session_start'].head()
 
 # %%
 es['sessions'].last_time_index.head()
+
+# %%
