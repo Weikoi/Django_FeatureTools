@@ -11,14 +11,18 @@ from featuretools.variable_types import DatetimeTimeIndex, Numeric
 """
 # %%
 pd.set_option('display.max_columns', 100)
+pd.set_option('display.max_rows', 500)
 data = ft.demo.load_mock_customer()
 transactions_df = data["transactions"].merge(
     data["sessions"]).merge(data["customers"]).merge(data["products"])
 
+transactions_df = transactions_df[transactions_df["customer_id"] == 4]
+transactions_df
 # %%
 es = ft.EntitySet()
-es = es.entity_from_dataframe(entity_id="transactions", dataframe=transactions_df, index="transaction_id",
-                              time_index="transaction_time",
+es = es.entity_from_dataframe(entity_id="transactions",
+                              dataframe=transactions_df,
+                              index="transaction_time",
                               variable_types={"product_id": ft.variable_types.Categorical,
                                               "zip_code": ft.variable_types.ZIPCode})
 
@@ -45,6 +49,8 @@ es = es.normalize_entity(base_entity_id="transactions",
 #                                         trans_primitives=["month"], max_depth=1)
 
 
+# %%
+print(es['transactions'].df)
 # %%
 """
 自定义agg_primitives:
@@ -86,6 +92,8 @@ log = make_trans_primitive(function=log,
 
 
 def max2nd(vals):
+
+    # return vals[0]
     return sorted(vals)[-2]
 
 
@@ -102,7 +110,8 @@ max2nd = make_agg_primitive(function=max2nd,
 
 
 def max3rd(vals):
-    return sorted(vals)[-2]
+
+    return sorted(vals)[-3]
 
 
 max3rd = make_agg_primitive(function=max3rd,
@@ -113,11 +122,32 @@ max3rd = make_agg_primitive(function=max3rd,
                             name="max3rd")
 
 """
-自定义rise_count:最近一段时间分成N段，资产呈现上升趋势的次数
+自定义demo: 测试自定义的primitives
+"""
+
+
+def demo(vals):
+    print('==============')
+    print(vals)
+    return abs(vals)
+
+
+demo = make_trans_primitive(function=demo,
+                            input_types=[Numeric],
+                            return_type=Numeric,
+                            # uses_calc_time=True,
+                            description="demo test.",
+                            name="demo")
+
+
+"""
+自定义rise_count:最近一段时间分成N段，统计资产呈现上升趋势的次数
 """
 
 
 def rise_count(vals, n=3):
+    print("调用一次")
+    print(vals)
     count = 0
     length = len(vals)
     start = 0
@@ -125,10 +155,13 @@ def rise_count(vals, n=3):
 
     new_s = vals.shift(-1) - vals
     for _ in range(n):
+
         start_flag = length // n * start
         end_flag = length // n * end
-
+        # print(start_flag, end_flag)
         piece = new_s.iloc[start_flag:end_flag]
+        # print(sum(piece))
+        # print()
         if (sum(piece) > 0):
             count += 1
         start += 1
@@ -146,52 +179,52 @@ rise_count = make_agg_primitive(function=rise_count,
 # %%
 
 
-"""
-# 生成新的特征融合矩阵
-# 可以根据target_entity的不同生成不同的融合特征矩阵
-"""
-feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
-                                      #   agg_primitives=["median", "count", "num_unique", "max","avg_time_between", "n_most_common", max2nd, max3rd],
-                                      agg_primitives=[rise_count],
-                                      trans_primitives=["month"],
-                                      max_depth=2)
+# """
+# # 生成新的特征融合矩阵
+# # 可以根据target_entity的不同生成不同的融合特征矩阵
+# """
+# feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
+#                                       #   agg_primitives=["median", "count", "num_unique", "max","avg_time_between", "n_most_common", max2nd, max3rd],
+#                                       agg_primitives=[rise_count],
+#                                       trans_primitives=["month"],
+#                                       max_depth=2)
 
-# %%
-feature_defs
+# # %%
+# feature_defs
 
-# %%
-feature_matrix
+# # %%
+# feature_matrix
 
 
-# %%
-"""
-# 注意target_entity与cutoff_times的时间戳是对应的，如果target是客户，那么设立的应当是customer_id,如果target是product,那么设立的应当是product_id
-# 所以注意二者之间的匹配关系
-"""
-cutoff_times = pd.DataFrame()
+# # %%
+# """
+# # 注意target_entity与cutoff_times的时间戳是对应的，如果target是客户，那么设立的应当是customer_id,如果target是product,那么设立的应当是product_id
+# # 所以注意二者之间的匹配关系
+# """
+# cutoff_times = pd.DataFrame()
 
-cutoff_times['customer_id'] = [1, 2, 3, 1]
+# cutoff_times['customer_id'] = [1, 2, 3, 1]
 
-cutoff_times['time'] = pd.to_datetime(['2014-1-1 04:00',
-                                       '2014-1-1 05:00',
-                                       '2014-1-1 06:00',
-                                       '2014-1-1 08:00'])
-# cutoff_times['label'] = [True, True, False, True]
+# cutoff_times['time'] = pd.to_datetime(['2014-1-1 04:00',
+#                                        '2014-1-1 05:00',
+#                                        '2014-1-1 06:00',
+#                                        '2014-1-1 08:00'])
+# # cutoff_times['label'] = [True, True, False, True]
 
-# %%
-cutoff_times
+# # %%
+# cutoff_times
 
-# %%
-fm, features = ft.dfs(entityset=es,
-                      target_entity='customers',
-                      agg_primitives=[rise_count],
-                      cutoff_time=cutoff_times,
-                      cutoff_time_in_index=True)
+# # %%
+# fm, features = ft.dfs(entityset=es,
+#                       target_entity='customers',
+#                       agg_primitives=[rise_count],
+#                       cutoff_time=cutoff_times,
+#                       cutoff_time_in_index=True)
 
-# %%
-fm
-# %%
-features
+# # %%
+# fm
+# # %%
+# features
 
 
 # %%
@@ -200,23 +233,25 @@ features
 # 其次cutoff为特征计算的截止时间，时间窗口是在这截止时间之前的窗口！！！
 # training_window可以有的单位：second, minute,hour, day, week, year, 注意没有month, 这是源码中check_timedelta的api所决定的
 """
-es.add_last_time_indexes()
+# es.add_last_time_indexes()
+
+# print(es)
 window_fm, window_features = ft.dfs(entityset=es,
-                                    target_entity="customers",
+                                    target_entity="transactions",
                                     agg_primitives=[rise_count],
-                                    cutoff_time=cutoff_times,
-                                    cutoff_time_in_index=True,
-                                    training_window="1 day")
+                                    trans_primitives=[demo],
+                                    # cutoff_time=cutoff_times,
+                                    # cutoff_time_in_index=True,
+                                    # training_window="1 hour"
+                                    )
 
 # %%
-window_fm
+print(window_fm)
 # %%
-window_features
+print(window_features)
 
 # %%
-es['sessions'].df['session_start'].head()
+# es['sessions'].df['session_start'].head()
 
-# %%
-es['sessions'].last_time_index.head()
-
-# %%
+# # %%
+# es['sessions'].last_time_index.head()
