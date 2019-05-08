@@ -12,12 +12,12 @@ from featuretools.variable_types import DatetimeTimeIndex, Numeric
 # %%
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.max_rows', 500)
+
+
 data = ft.demo.load_mock_customer()
 transactions_df = data["transactions"].merge(
     data["sessions"]).merge(data["customers"]).merge(data["products"])
 
-transactions_df = transactions_df[transactions_df["customer_id"] == 4]
-transactions_df
 # %%
 es = ft.EntitySet()
 es = es.entity_from_dataframe(entity_id="transactions",
@@ -43,101 +43,105 @@ es = es.normalize_entity(base_entity_id="transactions",
                          index="product_id",
                          additional_variables=["brand"])
 
+es
+
+#%%
+
+
 # feature_matrix1, feature_defs1 = ft.dfs(entityset=es, target_entity="products")
 #
 # feature_matrix2, feature_defs2 = ft.dfs(entityset=es, target_entity="customers", agg_primitives=["count"],
 #                                         trans_primitives=["month"], max_depth=1)
 
 
-# %%
-print(es['transactions'].df)
-# %%
-"""
-自定义agg_primitives:
-改写time since last，原函数为秒，现在改为小时输出
-"""
+
+# # %%
+# """
+# 自定义agg_primitives:
+# 改写time since last，原函数为秒，现在改为小时输出
+# """
 
 
-def time_since_last_by_hour(values, time=None):
-    time_since = time - values.iloc[-1]
-    return time_since.total_seconds() / 3600
+# def time_since_last_by_hour(values, time=None):
+#     time_since = time - values.iloc[-1]
+#     return time_since.total_seconds() / 3600
 
 
-Time_since_last_by_hour = make_agg_primitive(function=time_since_last_by_hour,
-                                             input_types=[DatetimeTimeIndex],
-                                             return_type=Numeric,
-                                             uses_calc_time=True)
+# Time_since_last_by_hour = make_agg_primitive(function=time_since_last_by_hour,
+#                                              input_types=[DatetimeTimeIndex],
+#                                              return_type=Numeric,
+#                                              uses_calc_time=True)
 
-"""
-自定义trans_primitives:
-添加log e 的自然对数
-参数name为生成后的特征所显示的名字，而接受make_transprimitive的参数为传给dfs的基元名，注意是变量，而不是字符串（自定义的特殊）
-"""
-
-
-def log(vals):
-    return np.log(vals)
+# """
+# 自定义trans_primitives:
+# 添加log e 的自然对数
+# 参数name为生成后的特征所显示的名字，而接受make_transprimitive的参数为传给dfs的基元名，注意是变量，而不是字符串（自定义的特殊）
+# """
 
 
-log = make_trans_primitive(function=log,
-                           input_types=[Numeric],
-                           return_type=Numeric,
-                           # uses_calc_time=True,
-                           description="Calculates the log of the value.",
-                           name="log_e")
-
-"""
-自定义max2:取第二大的数
-"""
+# def log(vals):
+#     return np.log(vals)
 
 
-def max2nd(vals):
+# log = make_trans_primitive(function=log,
+#                            input_types=[Numeric],
+#                            return_type=Numeric,
+#                            # uses_calc_time=True,
+#                            description="Calculates the log of the value.",
+#                            name="log_e")
 
-    # return vals[0]
-    return sorted(vals)[-2]
-
-
-max2nd = make_agg_primitive(function=max2nd,
-                            input_types=[Numeric],
-                            return_type=Numeric,
-                            # uses_calc_time=True,
-                            description="Calculates the second max of the value.",
-                            name="max2nd")
-
-"""
-自定义max3:取第三大的数
-"""
+# """
+# 自定义max2:取第二大的数
+# """
 
 
-def max3rd(vals):
+# def max2nd(vals):
 
-    return sorted(vals)[-3]
-
-
-max3rd = make_agg_primitive(function=max3rd,
-                            input_types=[Numeric],
-                            return_type=Numeric,
-                            # uses_calc_time=True,
-                            description="Calculates the 3rd max of the value.",
-                            name="max3rd")
-
-"""
-自定义demo: 测试自定义的primitives
-"""
+#     # return vals[0]
+#     return sorted(vals)[-2]
 
 
-def demo(vals):
-    print('==============')
-    print(vals)
-    return abs(vals)
+# max2nd = make_agg_primitive(function=max2nd,
+#                             input_types=[Numeric],
+#                             return_type=Numeric,
+#                             # uses_calc_time=True,
+#                             description="Calculates the second max of the value.",
+#                             name="max2nd")
+
+# """
+# 自定义max3:取第三大的数
+# """
 
 
-demo = make_trans_primitive(function=demo,
-                            input_types=[Numeric],
-                            return_type=Numeric,
-                            # uses_calc_time=True,
-                            description="demo test.",
-                            name="demo")
+# def max3rd(vals):
+
+#     return sorted(vals)[-3]
+
+
+# max3rd = make_agg_primitive(function=max3rd,
+#                             input_types=[Numeric],
+#                             return_type=Numeric,
+#                             # uses_calc_time=True,
+#                             description="Calculates the 3rd max of the value.",
+#                             name="max3rd")
+
+# """
+# 自定义demo: 测试自定义的primitives
+# """
+
+
+# def demo(vals):
+#     print('==============')
+#     print(vals)
+#     return abs(vals)
+
+
+# demo = make_trans_primitive(function=demo,
+#                             input_types=[Numeric],
+#                             return_type=Numeric,
+#                             # uses_calc_time=True,
+#                             description="demo test.",
+#                             name="demo")
 
 
 """
@@ -146,8 +150,6 @@ demo = make_trans_primitive(function=demo,
 
 
 def rise_count(vals, n=3):
-    print("调用一次")
-    print(vals)
     count = 0
     length = len(vals)
     start = 0
@@ -179,21 +181,21 @@ rise_count = make_agg_primitive(function=rise_count,
 # %%
 
 
-# """
-# # 生成新的特征融合矩阵
-# # 可以根据target_entity的不同生成不同的融合特征矩阵
-# """
-# feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
-#                                       #   agg_primitives=["median", "count", "num_unique", "max","avg_time_between", "n_most_common", max2nd, max3rd],
-#                                       agg_primitives=[rise_count],
-#                                       trans_primitives=["month"],
-#                                       max_depth=2)
+"""
+# 生成新的特征融合矩阵
+# 可以根据target_entity的不同生成不同的融合特征矩阵
+"""
+feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
+                                      #   agg_primitives=["median", "count", "num_unique", "max","avg_time_between", "n_most_common", max2nd, max3rd],
+                                      agg_primitives=[rise_count],
+                                      trans_primitives=["month"],
+                                      max_depth=2)
 
-# # %%
-# feature_defs
+# %%
+feature_defs
 
-# # %%
-# feature_matrix
+# %%
+feature_matrix
 
 
 # # %%
@@ -238,8 +240,9 @@ rise_count = make_agg_primitive(function=rise_count,
 # print(es)
 window_fm, window_features = ft.dfs(entityset=es,
                                     target_entity="transactions",
-                                    agg_primitives=[rise_count],
-                                    trans_primitives=[demo],
+                                    agg_primitives=["max",rise_count],
+                                    trans_primitives=["month"]
+                                    # trans_primitives=[demo],
                                     # cutoff_time=cutoff_times,
                                     # cutoff_time_in_index=True,
                                     # training_window="1 hour"
@@ -250,8 +253,3 @@ print(window_fm)
 # %%
 print(window_features)
 
-# %%
-# es['sessions'].df['session_start'].head()
-
-# # %%
-# es['sessions'].last_time_index.head()
