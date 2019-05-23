@@ -4,15 +4,41 @@ from django.http import JsonResponse, HttpResponse
 
 # Create your views here.
 def index(request):
-    return render(request, "index2.html")
+    return render(request, "index.html")
 
 
+# 用來接收無效URL的响应
 def no_page(request):
     html = "<h1>There is no page referred to this response</h1>"
     return HttpResponse(html)
 
 
-# 函数postTest2用来处理表单提交后服务器响应的结果
+# 函数selected_features用来处理 特征选择提交后服务器响应的结果
+def selected_features(request):
+    selected = request.POST.getlist('selected')
+
+    columns = list(selected)
+    columns.insert(0, 'customer_id')
+    import pandas as pd
+    df = pd.read_csv("all_features.csv")
+    print(columns)
+    new_df = df[columns]
+    print(new_df)
+    new_df.to_csv("selected_features.csv", index=False)
+    print(new_df.iloc[0])
+    sample_data1 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[0]]
+    sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[1]]
+    sample_data3 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[2]]
+    sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[3]]
+    sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[4]]
+    print(sample_data1)
+    return render(request, "selected_features.html",
+                  {"columns": columns, 'sample_data1': sample_data1, 'sample_data2': sample_data2,
+                   'sample_data3': sample_data3, 'sample_data4': sample_data4,
+                   'sample_data5': sample_data5})
+
+
+# 函数get_results用来处理表单提交后服务器响应的结果
 def get_results(request):
     max_depth = request.POST['max_depth']
     agg_pri = request.POST.getlist('agg_pri')
@@ -108,10 +134,24 @@ def get_results(request):
                                             agg_primitives=agg_pri,
                                             trans_primitives=trans_pri,
                                             max_depth=int(context['max_depth']))
+
+    # 将索引作为第一列插入数据矩阵
+    feature_matrix3 = feature_matrix3.reset_index()
+    new_columns = feature_matrix3.columns
+
+    # 保存数据矩阵,注意在特征选择界面，没有customer_id作为选项，因为这只是索引
+    feature_matrix3.to_csv("all_features.csv", index=False)
     res = []
-    for i in feature_defs3:
+    for i in new_columns:
         res.append(str(i))
 
+    # 将所有的浮点数精度调整到小数点后两位
     sample_data1 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[0]]
-    sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[0]]
-    return render(request, 'get_results.html', {'res': res, 'sample_data1': sample_data1, 'sample_data2': sample_data2})
+    sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[1]]
+    sample_data3 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[2]]
+    sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[3]]
+    sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[4]]
+
+    return render(request, 'get_results.html', {'res': res, 'sample_data1': sample_data1, 'sample_data2': sample_data2,
+                                                'sample_data3': sample_data3, 'sample_data4': sample_data4,
+                                                'sample_data5': sample_data5})

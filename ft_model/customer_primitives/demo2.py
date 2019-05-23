@@ -192,10 +192,12 @@ feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
                                       max_depth=2)
 
 # %%
-feature_defs
+import sys
+print(sys.getsizeof(feature_matrix)/1024)
+print(sys.getsizeof(feature_defs))
 
 # %%
-feature_matrix
+# feature_matrix
 
 
 # # %%
@@ -249,7 +251,7 @@ window_fm, window_features = ft.dfs(entityset=es,
                                     )
 
 # %%
-print(window_fm)
+print(sys.getsizeof(window_fm))
 # %%
-print(window_features)
+print(sys.getsizeof(window_features))
 

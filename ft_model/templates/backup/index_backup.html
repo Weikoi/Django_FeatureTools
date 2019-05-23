@@ -1,30 +1,37 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-{#    <link href="../static/style.css" rel='stylesheet' type='text/css'/>#}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="../../static/style.css" rel='stylesheet' type='text/css'/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
 
 </head>
 
 <body>
 <div class="main">
     <!-----start-main---->
-    <h3 align="center" class="bs-docs-header" style="font-size: 35px;">参数配置表单</h3>
+    <h1 align="center" style="font-size: 40px;">参数配置表单</h1>
     <br>
     <hr>
     <br>
     <form action="/get_results/" method="post">
         {% csrf_token %}
-        <h3 align="center">max depth:</h3>
-        <div>
-          <div class="form-group" style="display: flex;justify-content: center;">
-            <input type="text" class="form-control" style="height:51px;width:449px" name="max_depth" placeholder="请输入特征融合深度">
-          </div>
-        </div>
-
+        <p align="center">max_depth:</p>
         <div class="lable">
-            <h3 align="center">aggregate primitives:</h3>
+            <div style="display: flex;justify-content: center;">
+                <input type="text" style="text-align:center " name="max_depth" class="text" value="请输入特征融合深度">
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="lable">
+            <p align="center">agg_pri:</p><br>
             <div align="center">
                 <input type="checkbox" name="agg_pri" value="Count">Count,
                 <input type="checkbox" name="agg_pri" value="Mean">Mean,
@@ -48,9 +55,15 @@
         </div>
 
         <br>
-        <br>
         <div class="column">
-            <h3 align="center">transform primitives:</h3>
+            <p align="center">agg_pri_customer:</p><br>
+            <div align="center">
+                <input type="checkbox" name="agg_pri_customer" value="Time_since_last_by_hour">Time_since_last_by_hour
+            </div>
+            <br>
+        </div>
+        <div class="column">
+            <p align="center">trans_pri:</p><br>
             <div align="center">
                 <input type="checkbox" name="trans_pri" value="month">month
 
@@ -59,17 +72,33 @@
             <br>
         </div>
 
-        <div style="display: flex;justify-content: center;">
-            <input class="btn btn-primary" type="submit" value="提交参数">
+        <div class="column">
+            <p align="center">trans_pri_customer:</p><br>
+            <div align="center">
+                <input type="checkbox" name="trans_pri_customer" value="log_e">log_e
+            </div>
+            <br>
+        </div>
 
-            <input class="btn btn-success" type="reset" value="重置参数">
+        <div style="display: flex;justify-content: center;">
+            <div class="submit">
+                <input type="submit" value="提交参数">
+            </div>
+            <div class="reset">
+                <input type="reset" value="重置参数">
+            </div>
+
         </div>
 
         <div class="clear"></div>
     </form>
     <!-----//end-main---->
 </div>
-
+<!-----start-copyright---->
+<div class="copy-right">
+    <a href="#" target="_blank">@copyright</a>
+</div>
+<!-----//end-copyright---->
 
 </body>
 </html>

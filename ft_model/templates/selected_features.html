@@ -4,38 +4,31 @@
 
     <head>
         <meta charset="utf-8">
-        <title>所有的融合特征</title>
+        <title>选择的融合特征</title>
         <link rel="stylesheet" href="../static/semantic.css">
-         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
         <script src="../static/js/jquery.min.js"></script>
         <script src="../static/semantic.js"></script>
         <meta charset="utf-8">
         <title>Title</title>
-        <style>
-            .table>tbody>tr>td{
-                border:1px;
-                }
-        </style>
     </head>
     <body>
         <div class="navbar navbar-inverse">
             <div class="navbar-brand" id="menu">
-                生成特征页面
+                手动选择的特征有
             </div>
         </div>
 
-        <form action="/selected_features/" method="post">
-            {% csrf_token %}
-            <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
+         <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
                 <table class="table table-striped">
 {#                  <caption>生成特征：</caption>#}
                   <tbody>
 
                         <tr>
                             <td>customer_id</td>
-                            {% for result in res|slice:"1:" %}
-                                <td><input type="checkbox" name="selected" value="{{ result }}">{{ result }}</td>
+                            {% for result in columns|slice:"1:" %}
+                                <td>{{ result }}</td>
                             {% endfor %}
                         </tr>
 
@@ -68,13 +61,6 @@
                   </tbody>
                 </table>
             </div>
-            <div style="display: flex;justify-content: center;">
-                <input class="btn btn-primary" type="submit" value="提交">
-
-                <input class="btn btn-default" type="reset" value="重置">
-            </div>
-        </form>
-
 
     </body>
 </html>

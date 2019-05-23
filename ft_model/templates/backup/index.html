@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>A AWESOME WEB !</title>
+    <link rel="stylesheet" href="../../static/semantic.css">
+    <script src="../../static/js/jquery.min.js"></script>
+    <script src="../../static/semantic.js"></script>
+
+</head>
+<body>
+    <form  action="/get_results/" method="post">
+        <div class="form_demo">
+            {% csrf_token %}
+            <br>
+            <div class="ui three column grid">
+                <div class="column"></div>
+                <div class="column">
+                    max_depth: <input type="text" name="depth"><br>
+                </div>
+                <div class="column"></div>
+            </div>
+
+            <br>
+            <div class="ui three column grid">
+                <div class="column"></div>
+                <div align="center" class="column">
+                    agg_pri:
+                    <input type="checkbox" name="agg_pri" value="mean">mean
+
+                    <input type="checkbox" name="agg_pri" value="sum">sum
+
+                    <input type="checkbox" name="agg_pri" value="mode">mode
+                    <br>
+                </div>
+                <div class="column"></div>
+            </div>
+
+            <div class="ui three column grid">
+                <div class="column"></div>
+                <div class="column">
+                    trans_pri:
+                    <input type="checkbox" name="trans_pri" value="month">month
+
+                    <input type="checkbox" name="trans_pri" value="hour">hour
+                    <br>
+                    <br>
+                    <input type="submit" value="提交">
+                    <br>
+                </div>
+                <div class="column"></div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
