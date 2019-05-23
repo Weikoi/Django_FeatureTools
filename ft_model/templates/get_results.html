@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <div class="ui two column grid">
+        <div class="ui three column grid">
             <div class="column" align="center">
                 <h3>生成的特征为:</h3><br>
                 {% for result in res %}
@@ -26,8 +26,14 @@
                 {% endfor %}
             </div>
             <div class="column" align="center">
-                <h3>生成的数据sample为:</h3><br>
-                {% for sample in sample_data %}
+                <h3>生成的数据sample1为:</h3><br>
+                {% for sample in sample_data1 %}
+                    {{ sample }}<hr>
+                {% endfor %}
+            </div>
+            <div class="column" align="center">
+                <h3>生成的数据sample2为:</h3><br>
+                {% for sample in sample_data2 %}
                     {{ sample }}<hr>
                 {% endfor %}
             </div>

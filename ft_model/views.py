@@ -66,6 +66,7 @@ def get_results(request):
     自定义agg_primitives:
     改写time since last，原函数为秒，现在改为小时输出
     """
+
     def time_since_last_by_hour(values, time=None):
         time_since = time - values.iloc[-1]
         return time_since.total_seconds() / 3600
@@ -111,5 +112,6 @@ def get_results(request):
     for i in feature_defs3:
         res.append(str(i))
 
-    sample_data = [i for i in feature_matrix3.iloc[0]]
-    return render(request, 'get_results.html', {'res': res, 'sample_data': sample_data})
+    sample_data1 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[0]]
+    sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix3.iloc[0]]
+    return render(request, 'get_results.html', {'res': res, 'sample_data1': sample_data1, 'sample_data2': sample_data2})

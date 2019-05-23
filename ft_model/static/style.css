@@ -109,7 +109,7 @@ body {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    background: url(./images/back.jpg) no-repeat fixed center;
+    /*background: url(./images/back.jpg) no-repeat fixed center;*/
     background-size: 100% 100%;
     font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
