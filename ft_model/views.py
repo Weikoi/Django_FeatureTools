@@ -7,6 +7,33 @@ def index(request):
     return render(request, "index.html")
 
 
+def select_tables(request):
+    import featuretools as ft
+    import pandas as pd
+    import numpy as np
+    from featuretools.primitives import make_trans_primitive, make_agg_primitive
+    from featuretools.variable_types import DatetimeTimeIndex, Numeric
+    data = ft.demo.load_mock_customer()
+    transactions_columns = list(data["transactions"].columns)
+    sessions_columns = list(data["sessions"].columns)
+    customers_columns = list(data["customers"].columns)
+
+    return render(request, "select_tables.html",
+                  {"transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
+                   "customers_columns": customers_columns})
+
+
+def variables_type(request):
+    transactions_columns = request.POST.getlist('transactions')
+    sessions_columns = request.POST.getlist('sessions')
+    customers_columns = request.POST.getlist('customers')
+
+    print("===========================================================================test")
+    return render(request, "variables_type.html",
+           {"transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
+            "customers_columns": customers_columns})
+
+
 # 用來接收無效URL的响应
 def no_page(request):
     html = "<h1>There is no page referred to this response</h1>"

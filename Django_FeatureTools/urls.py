@@ -17,12 +17,13 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, re_path
 from ft_model.views import index
-from ft_model.views import get_results,no_page,selected_features
+from ft_model.views import get_results, no_page, selected_features, select_tables, variables_type
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', index),
-    path('', index),
+    path('', select_tables),
+    path('variables_type/', variables_type),
     path('get_results/', get_results),
     path('selected_features/', selected_features),
     # url(r'^\w+', no_page),

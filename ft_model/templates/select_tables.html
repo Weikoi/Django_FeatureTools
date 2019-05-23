@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>选择初始特征</title>
+    <link rel="stylesheet" href="../static/semantic.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/semantic.js"></script>
+    <meta charset="utf-8">
+    <title>Title</title>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse">
+        <div class="navbar-brand" id="menu">
+            初始特征选择
+        </div>
+    </div>
+
+    <form action="/variables_type/" method="post">
+        {% csrf_token %}
+        <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
+            <h3 align="center">transactions</h3>
+            <table class="table table-striped">
+                {#                  <caption>生成特征：</caption>#}
+                <tbody>
+
+                    <tr>
+                        {% for result in transactions_columns %}
+                        <td><input type="checkbox" name="transactions" value="{{ result }}">{{ result }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div
+            style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
+            <h3 align="center">sessions</h3>
+            <table class="table table-striped">
+                {#                  <caption>生成特征：</caption>#}
+                <tbody>
+
+                    <tr>
+                        {% for result in sessions_columns %}
+                        <td><input type="checkbox" name="sessions" value="{{ result }}">{{ result }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div
+            style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
+            <h3 align="center">customers</h3>
+            <table class="table table-striped">
+                {#                  <caption>生成特征：</caption>#}
+                <tbody>
+
+                    <tr>
+                        {% for result in customers_columns %}
+                        <td><input type="checkbox" name="customers" value="{{ result }}">{{ result }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div style="display: flex;justify-content: center;font-size: 3px">
+            <input class="btn btn-primary" type="submit" value="提交参数">
+            <input class="btn btn-default" type="reset" value="重置参数">
+        </div>
+    </form>
+</body>
+
+</html>
