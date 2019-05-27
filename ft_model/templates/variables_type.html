@@ -33,7 +33,7 @@
             </h3>
             {% for result in transactions_columns %}
                 <div>{{ result }}</div>
-                <select name="transactions_columns">
+                <select name="transactions_types">
                     <option value="Index">Index</option>
                     <option value="Id">Id</option>
                     <option value="TimeIndex">TimeIndex</option>
@@ -54,7 +54,7 @@
             </h3>
             {% for result in sessions_columns %}
                 <div>{{ result }}</div>
-                <select name="sessions_columns">
+                <select name="sessions_types">
                     <option value="Index">Index</option>
                     <option value="Id">Id</option>
                     <option value="TimeIndex">TimeIndex</option>
@@ -74,7 +74,7 @@
             </h3>
             {% for result in customers_columns %}
                 <div>{{ result }}</div>
-                <select name="customers_columns">
+                <select name="customers_types">
                     <option value="Index">Index</option>
                     <option value="Id">Id</option>
                     <option value="TimeIndex">TimeIndex</option>

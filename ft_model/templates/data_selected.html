@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    {% for result in transactions_columns %}
-        <div>{{ result }}</div>
-    {% endfor %}
-
-    <hr>
-    {% for result in sessions %}
-        <div>{{ result }}</div>
-    {% endfor %}
+    <style>
+        .center {text-align: center}
+    </style>
 </head>
 <body>
+    <div class="center">
+        {% for result in transactions_columns %}
+            <div>{{ result }}</div>
+        {% endfor %}
 
+        {% for result in transactions_columns %}
+            <div>{{ result }}</div>
+        {% endfor %}
+
+        <hr>
+        {% for result in sessions_columns %}
+            <div>{{ result }}</div>
+        {% endfor %}
+        <hr>
+        {% for result in customers_columns %}
+            <div>{{ result }}</div>
+        {% endfor %}
+    </div>
 </body>
 </html>
