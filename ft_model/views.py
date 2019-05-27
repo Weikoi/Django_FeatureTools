@@ -7,6 +7,13 @@ def index(request):
     return render(request, "index.html")
 
 
+# 用來接收無效URL的响应
+def no_page(request):
+    html = "<h1>There is no page referred to this response</h1>"
+    return HttpResponse(html)
+
+
+# 用来展现对于表和字段的选择
 def select_tables(request):
     import featuretools as ft
     import pandas as pd
@@ -23,35 +30,35 @@ def select_tables(request):
                    "customers_columns": customers_columns})
 
 
+# 用来展示已经选择的表和字段，并且可以选择对应的数据类型
 def variables_type(request):
     transactions_columns = request.POST.getlist('transactions')
     sessions_columns = request.POST.getlist('sessions')
     customers_columns = request.POST.getlist('customers')
+
+    transactions_columns = request.COOKIES.get('transactions_columns')
+    response = HttpResponse('OK')
+    response.set_cookie("transactions_columns", transactions_columns, max_age=600)
+
+    print(transactions_columns)
 
     return render(request, "variables_type.html",
                   {"transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
                    "customers_columns": customers_columns})
 
 
-# 用來接收無效URL的响应
-def no_page(request):
-    html = "<h1>There is no page referred to this response</h1>"
-    return HttpResponse(html)
-
-
 # 用来展示初始选择的特征和对应的数据类型
 def data_selected(request):
-    x = request.POST.getlist('tr')
-    y = request.POST.getlist('2')
-    y = request.POST.getlist('2')
-    print(x)
-    print(y)
+    transactions_columns = request.POST.getlist('transactions_columns')
+    sessions_columns = request.POST.getlist('sessions_columns')
+    customers_columns = request.POST.getlist('customers_columns')
 
     return render(request, "data_selected.html",
-                  {"transactions_columns": x, "y": y})
+                  {"transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
+                   'customers_columns': customers_columns})
 
 
-# 函数selected_features用来处理 特征选择提交后服务器响应的结果
+# 函数selected_features用来处理特征选择提交后服务器响应的结果
 def selected_features(request):
     selected = request.POST.getlist('selected')
 
@@ -76,7 +83,7 @@ def selected_features(request):
                    'sample_data5': sample_data5})
 
 
-# 函数get_results用来处理表单提交后服务器响应的结果
+# 函数get_results用来处理模型相关参数提交后服务器响应的结果
 def get_results(request):
     max_depth = request.POST['max_depth']
     agg_pri = request.POST.getlist('agg_pri')
