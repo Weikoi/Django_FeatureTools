@@ -17,7 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, re_path
 from ft_model.views import index
-from ft_model.views import get_results, no_page, selected_features, select_tables, variables_type
+from ft_model.views import get_results, no_page, selected_features, select_tables, variables_type, data_selected
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +26,7 @@ urlpatterns = [
     path('variables_type/', variables_type),
     path('get_results/', get_results),
     path('selected_features/', selected_features),
+    path('data_selected/', data_selected),
     # url(r'^\w+', no_page),
     re_path(r'^\w+', no_page),
 ]

@@ -28,16 +28,27 @@ def variables_type(request):
     sessions_columns = request.POST.getlist('sessions')
     customers_columns = request.POST.getlist('customers')
 
-    print("===========================================================================test")
     return render(request, "variables_type.html",
-           {"transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
-            "customers_columns": customers_columns})
+                  {"transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
+                   "customers_columns": customers_columns})
 
 
 # 用來接收無效URL的响应
 def no_page(request):
     html = "<h1>There is no page referred to this response</h1>"
     return HttpResponse(html)
+
+
+# 用来展示初始选择的特征和对应的数据类型
+def data_selected(request):
+    x = request.POST.getlist('tr')
+    y = request.POST.getlist('2')
+    y = request.POST.getlist('2')
+    print(x)
+    print(y)
+
+    return render(request, "data_selected.html",
+                  {"transactions_columns": x, "y": y})
 
 
 # 函数selected_features用来处理 特征选择提交后服务器响应的结果
