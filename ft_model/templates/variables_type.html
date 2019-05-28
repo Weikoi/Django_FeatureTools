@@ -25,9 +25,9 @@
         </div>
     </div>
 
-    <form action="/data_selected/" method="post">
+    <form action="/model_parameters/" method="post">
+        {% csrf_token %}
         <div class="center">
-            {% csrf_token %}
             <h3>
             Transactions
             </h3>
@@ -45,7 +45,6 @@
                     <option value="Ordinal">Ordinal</option>
                     <option value="Boolean">Boolean</option>
                 </select>
-                <br>
             {% endfor %}
 
             <hr>
@@ -88,7 +87,27 @@
                 </select>
                 <br>
             {% endfor %}
-
+            <hr>
+            <h3>
+            products
+            </h3>
+            {% for result in products_columns %}
+                <div>{{ result }}</div>
+                <select name="products_types">
+                    <option value="Index">Index</option>
+                    <option value="Id">Id</option>
+                    <option value="TimeIndex">TimeIndex</option>
+                    <option value="DatetimeTimeIndex">DatetimeTimeIndex</option>
+                    <option value="NumericTimeIndex">NumericTimeIndex</option>
+                    <option value="Datetime">Datetime</option>
+                    <option value="Numeric">Numeric</option>
+                    <option value="Categorical">Categorical</option>
+                    <option value="Ordinal">Ordinal</option>
+                    <option value="Boolean">Boolean</option>
+                </select>
+                <br>
+            {% endfor %}
+            <hr>
             <br>
             <div style="display: flex;justify-content: center;font-size: 3px">
                 <input class="btn btn-primary" type="submit" value="提交参数">

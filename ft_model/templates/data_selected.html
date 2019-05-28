@@ -9,20 +9,36 @@
 </head>
 <body>
     <div class="center">
-        {% for result in transactions_columns %}
+        {% for result in transactions_types %}
             <div>{{ result }}</div>
         {% endfor %}
 
+        <hr>
+        {% for result in sessions_types %}
+            <div>{{ result }}</div>
+        {% endfor %}
+        <hr>
+        {% for result in customers_types %}
+            <div>{{ result }}</div>
+        {% endfor %}
+        <hr>
+        {% for result in products_types %}
+            <div>{{ result }}</div>
+        {% endfor %}
+        <hr>
         {% for result in transactions_columns %}
             <div>{{ result }}</div>
         {% endfor %}
-
         <hr>
         {% for result in sessions_columns %}
             <div>{{ result }}</div>
         {% endfor %}
         <hr>
         {% for result in customers_columns %}
+            <div>{{ result }}</div>
+        {% endfor %}
+        <hr>
+        {% for result in products_columns %}
             <div>{{ result }}</div>
         {% endfor %}
     </div>
