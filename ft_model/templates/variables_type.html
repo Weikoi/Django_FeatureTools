@@ -15,15 +15,25 @@
     <title>Title</title>
     <style>
         .center {text-align: center}
+        td{width:500px;overflow:hidden}
     </style>
 </head>
 
 <body>
-    <div class="navbar navbar-inverse">
-        <div class="navbar-brand" id="menu">
-            选择特征类型
+    <nav class="navbar navbar-default">
+        <!-- We use the fluid option here to avoid overriding the fixed width of a normal container within the narrow content columns. -->
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../select_tables/">数据源字段选择</a></li>
+                    <li  class="active"><a>字段属性选择</a></li>
+                    <li><a>模型参数选择</a></li>
+                    <li><a>生成特征选择</a></li>
+                    <li><a>最终选择的特征</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
         </div>
-    </div>
+    </nav>
 
     <form action="/model_parameters/" method="post">
         {% csrf_token %}

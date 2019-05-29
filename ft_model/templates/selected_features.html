@@ -13,16 +13,28 @@
     <script src="../static/semantic.js"></script>
     <meta charset="utf-8">
     <title>Title</title>
+    <style>
+        td{width:500px;overflow:hidden}
+    </style>
 </head>
 <body>
-<div class="navbar navbar-inverse">
-    <div class="navbar-brand" id="menu">
-        手动选择的特征有
-    </div>
-</div>
+    <nav class="navbar navbar-default">
+        <!-- We use the fluid option here to avoid overriding the fixed width of a normal container within the narrow content columns. -->
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../select_tables/">数据源字段选择</a></li>
+                    <li><a>字段属性选择</a></li>
+                    <li><a>模型参数原则</a></li>
+                    <li><a>生成特征选择</a></li>
+                    <li class="active"><a>最终选择的特征</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div>
+    </nav>
 
 <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
-    <table class="table table-striped">
+    <table class="table table-bordered">
         {#                  <caption>生成特征：</caption>#}
         <tbody>
 
