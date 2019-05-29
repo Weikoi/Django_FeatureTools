@@ -104,10 +104,6 @@ def selected_features(request):
 
 # 函数get_results用来处理模型相关参数提交后服务器响应的结果
 def get_results(request):
-    print()
-    print()
-    print()
-    print()
     print("===================================================================================================")
     import featuretools as ft
     import featuretools
