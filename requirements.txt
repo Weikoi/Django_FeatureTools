@@ -1,0 +1,5 @@
+Django==2.2
+featuretools==0.6.1
+matplotlib==3.0.3
+numpy==1.16.2
+pandas==0.24.2
