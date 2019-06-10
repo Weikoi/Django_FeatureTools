@@ -5,7 +5,7 @@ import featuretools
 from django.template import RequestContext
 
 
-# 用來接收無效URL的响应
+# 用來接收无效URL的响应
 def no_page(request):
     html = "<h1>There is no page referred to this response</h1>"
     return HttpResponse(html)
@@ -25,8 +25,10 @@ def select_tables(request):
     products_columns = list(data["products"].columns)
 
     return render(request, "select_tables.html",
-                  {"transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
-                   "customers_columns": customers_columns, "products_columns": products_columns})
+                  {"transactions_columns": transactions_columns,
+                   "sessions_columns": sessions_columns,
+                   "customers_columns": customers_columns,
+                   "products_columns": products_columns})
 
 
 # 用来展示已经选择的表和字段，并且可以选择对应的数据类型
@@ -53,21 +55,29 @@ def model_parameters(request):
     sessions_types = request.POST.getlist('sessions_types')
     customers_types = request.POST.getlist('customers_types')
     products_types = request.POST.getlist('products_types')
+
     # print(customers_types)
     # print(products_types)
+
     transactions_columns = request.COOKIES['transactions_columns']
     sessions_columns = request.COOKIES['sessions_columns']
     customers_columns = request.COOKIES['customers_columns']
     products_columns = request.COOKIES['products_columns']
+
     # print(transactions_columns)
     # print(sessions_columns)
     # print(customers_columns)
     # print(products_columns)
+
     response = render(request, "model_parameters.html",
-                      {"transactions_types": transactions_types, "sessions_types": sessions_types,
-                       'customers_types': customers_types, "products_types": products_types,
-                       "transactions_columns": transactions_columns, "sessions_columns": sessions_columns,
-                       "customers_columns": customers_columns, "products_columns": products_columns, })
+                      {"transactions_types": transactions_types,
+                       "sessions_types": sessions_types,
+                       'customers_types': customers_types,
+                       "products_types": products_types,
+                       "transactions_columns": transactions_columns,
+                       "sessions_columns": sessions_columns,
+                       "customers_columns": customers_columns,
+                       "products_columns": products_columns, })
 
     response.set_cookie('transactions_types', transactions_types)
     response.set_cookie('sessions_types', sessions_types)
@@ -110,7 +120,6 @@ def get_results(request):
     import pandas as pd
     import numpy as np
     from featuretools.primitives import make_trans_primitive, make_agg_primitive
-    # from featuretools.variable_types import *
     # 数据源相关的参数
     transactions_types = eval(request.COOKIES['transactions_types'])
     sessions_types = eval(request.COOKIES['sessions_types'])
@@ -138,6 +147,7 @@ def get_results(request):
     # print(customers_columns)
     # print(products_columns)
 
+    # 将特征与对应类型封装到字典中。
     type_dict1 = {k: eval(v) for k, v in zip(transactions_columns, transactions_types)}
     type_dict2 = {k: eval(v) for k, v in zip(sessions_columns, sessions_types)}
     type_dict3 = {k: eval(v) for k, v in zip(customers_columns, customers_types)}
@@ -174,6 +184,7 @@ def get_results(request):
     type_dict.update(type_dict3)
     type_dict.update(type_dict4)
     # print("type_dict", type_dict)
+
     # 模型相关的参数
     max_depth = request.POST['max_depth']
     agg_pri = request.POST.getlist('agg_pri')
@@ -254,6 +265,7 @@ def get_results(request):
         agg_pri.append(Time_since_last_by_hour)
     if 'log_e' in trans_pri_customer:
         trans_pri.append(log)
+
     # 生成新的特征融合矩阵
     feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
                                           agg_primitives=agg_pri,
@@ -264,7 +276,7 @@ def get_results(request):
     feature_matrix = feature_matrix.reset_index()
     new_columns = feature_matrix.columns
 
-    # 保存数据矩阵,注意在特征选择界面，没有customer_id作为选项，因为这只是索引
+    # 保存数据矩阵,注意在特征选择界面，没有 customer_id 作为选项，因为这只是索引
     feature_matrix.to_csv("all_features.csv", index=False)
     res = []
     for i in new_columns:
