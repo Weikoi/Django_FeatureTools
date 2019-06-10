@@ -53,16 +53,16 @@ def model_parameters(request):
     sessions_types = request.POST.getlist('sessions_types')
     customers_types = request.POST.getlist('customers_types')
     products_types = request.POST.getlist('products_types')
-    print(customers_types)
-    print(products_types)
+    # print(customers_types)
+    # print(products_types)
     transactions_columns = request.COOKIES['transactions_columns']
     sessions_columns = request.COOKIES['sessions_columns']
     customers_columns = request.COOKIES['customers_columns']
     products_columns = request.COOKIES['products_columns']
-    print(transactions_columns)
-    print(sessions_columns)
-    print(customers_columns)
-    print(products_columns)
+    # print(transactions_columns)
+    # print(sessions_columns)
+    # print(customers_columns)
+    # print(products_columns)
     response = render(request, "model_parameters.html",
                       {"transactions_types": transactions_types, "sessions_types": sessions_types,
                        'customers_types': customers_types, "products_types": products_types,
@@ -95,7 +95,7 @@ def selected_features(request):
     sample_data3 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[2]]
     sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[3]]
     sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[4]]
-    print(sample_data1)
+    # print(sample_data1)
     return render(request, "selected_features.html",
                   {"columns": columns, 'sample_data1': sample_data1, 'sample_data2': sample_data2,
                    'sample_data3': sample_data3, 'sample_data4': sample_data4,
@@ -104,7 +104,7 @@ def selected_features(request):
 
 # 函数get_results用来处理模型相关参数提交后服务器响应的结果
 def get_results(request):
-    print("===================================================================================================")
+    # print("===================================================================================================")
     import featuretools as ft
     import featuretools
     import pandas as pd
@@ -122,32 +122,58 @@ def get_results(request):
     sessions_types = ["featuretools.variable_types." + str(i) for i in sessions_types]
     customers_types = ["featuretools.variable_types." + str(i) for i in customers_types]
     products_types = ["featuretools.variable_types." + str(i) for i in products_types]
-    print(transactions_types)
-    print(sessions_types)
-    print(customers_types)
-    print(products_types)
+
+    # print(transactions_types)
+    # print(sessions_types)
+    # print(customers_types)
+    # print(products_types)
 
     transactions_columns = eval(request.COOKIES['transactions_columns'])
     sessions_columns = eval(request.COOKIES['sessions_columns'])
     customers_columns = eval(request.COOKIES['customers_columns'])
     products_columns = eval(request.COOKIES['products_columns'])
 
-    print(transactions_columns)
-    print(sessions_columns)
-    print(customers_columns)
-    print(products_columns)
+    # print(transactions_columns)
+    # print(sessions_columns)
+    # print(customers_columns)
+    # print(products_columns)
 
     type_dict1 = {k: eval(v) for k, v in zip(transactions_columns, transactions_types)}
     type_dict2 = {k: eval(v) for k, v in zip(sessions_columns, sessions_types)}
     type_dict3 = {k: eval(v) for k, v in zip(customers_columns, customers_types)}
     type_dict4 = {k: eval(v) for k, v in zip(products_columns, products_types)}
 
+    # 自动识别标记为Index的特征，并作为抽取实体的index参数，传入模型
+    index1 = ''
+    index2 = ''
+    index3 = ''
+    index4 = ''
+
+    for k, v in type_dict1.items():
+        if '.Index' in str(v):
+            index1 = k
+
+    for k, v in type_dict2.items():
+        if '.Index' in str(v):
+            index2 = k
+
+    for k, v in type_dict3.items():
+        if '.Index' in str(v):
+            index3 = k
+
+    for k, v in type_dict4.items():
+        if '.Index' in str(v):
+            index4 = k
+
+    # print("============================")
+    # print(index1, index2, index3, index4)
+
     type_dict = {}
     type_dict.update(type_dict1)
     type_dict.update(type_dict2)
     type_dict.update(type_dict3)
     type_dict.update(type_dict4)
-    print("type_dict", type_dict)
+    # print("type_dict", type_dict)
     # 模型相关的参数
     max_depth = request.POST['max_depth']
     agg_pri = request.POST.getlist('agg_pri')
@@ -159,11 +185,11 @@ def get_results(request):
     pd.set_option('display.max_columns', 20)
     data = ft.demo.load_mock_customer()
     transactions_df = data["transactions"].merge(data["sessions"]).merge(data["customers"]).merge(data["products"])
-    print(transactions_df)
+    # print(transactions_df)
     es = ft.EntitySet()
 
     # 注意type_dict
-    es = es.entity_from_dataframe(entity_id="transactions", dataframe=transactions_df, index="transaction_id",
+    es = es.entity_from_dataframe(entity_id="transactions", dataframe=transactions_df, index=index1,
                                   time_index="transaction_time",
                                   variable_types=type_dict)
     sessions_columns.remove("session_id")
@@ -171,20 +197,20 @@ def get_results(request):
     # sessions_columns.remove("session_start")
     es = es.normalize_entity(base_entity_id="transactions",
                              new_entity_id="sessions",
-                             index="session_id",
+                             index=index2,
                              # make_time_index="session_start",
                              additional_variables=sessions_columns)
     customers_columns.remove("customer_id")
     # customers_columns.remove("join_date")
     es = es.normalize_entity(base_entity_id="transactions",
                              new_entity_id="customers",
-                             index="customer_id",
+                             index=index3,
                              # make_time_index="join_date",
                              additional_variables=customers_columns)
     products_columns.remove("product_id")
     es = es.normalize_entity(base_entity_id="transactions",
                              new_entity_id="products",
-                             index="product_id",
+                             index=index4,
                              additional_variables=products_columns)
 
     """
