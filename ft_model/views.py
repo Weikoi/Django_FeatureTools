@@ -251,6 +251,9 @@ def get_results(request):
     sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[3]]
     sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[4]]
 
-    return render(request, 'get_results.html', {'res': res, 'sample_data1': sample_data1, 'sample_data2': sample_data2,
-                                                'sample_data3': sample_data3, 'sample_data4': sample_data4,
+    return render(request, 'get_results.html', {'res': res,
+                                                'sample_data1': sample_data1,
+                                                'sample_data2': sample_data2,
+                                                'sample_data3': sample_data3,
+                                                'sample_data4': sample_data4,
                                                 'sample_data5': sample_data5})

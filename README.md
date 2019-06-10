@@ -32,7 +32,7 @@ python manage.py runserver
 
 <div align="center"> <img src="./pic/4.jpg"/> </div>
 
-5. 手工选择的特征界面，手动选择的特征和结果保存在根目录 selected_features.csv 中
+5. 手工选择的特征界面，手动选择的特征和结果保存在根目录 selected_features.csv 中.
 
 <div align="center"> <img src="./pic/5.jpg"/> </div>
 
