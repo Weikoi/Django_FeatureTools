@@ -21,6 +21,7 @@ from ft_model.views import get_results, no_page, selected_features, select_table
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', select_tables),
+    path('select_tables/', select_tables),
     path('variables_type/', variables_type),
     path('get_results/', get_results),
     path('selected_features/', selected_features),

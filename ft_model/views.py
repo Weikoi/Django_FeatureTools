@@ -1,8 +1,10 @@
 from django.shortcuts import render, render_to_response
 from django.http import JsonResponse, HttpResponse
 import featuretools
-# Create your views here.
 from django.template import RequestContext
+
+
+# Create your views here.
 
 
 # 用來接收无效URL的响应
@@ -89,8 +91,8 @@ def model_parameters(request):
 
 # 函数selected_features用来处理特征选择提交后服务器响应的结果
 def selected_features(request):
+    import re
     selected = request.POST.getlist('selected')
-
     columns = list(selected)
     columns.insert(0, 'customer_id')
     import pandas as pd
@@ -100,11 +102,14 @@ def selected_features(request):
     # print(new_df)
     new_df.to_csv("selected_features.csv", index=False)
     # print(new_df.iloc[0])
-    sample_data1 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[0]]
-    sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[1]]
-    sample_data3 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[2]]
-    sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[3]]
-    sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in new_df.iloc[4]]
+
+    # 显示的时候由于pandas中全部统一处理成float，导致ID之类的整形数变成带小数点的，目前没有找到更好的解决办法，
+    # 只好使用正则表达式进行区分打印，注意，这只是打印，与存储无关。
+    sample_data1 = [round(i, 2) if re.search("(\.)[\d]{2,}", str(i)) else int(i) for i in new_df.iloc[0]]
+    sample_data2 = [round(i, 2) if re.search("(\.)[\d]{2,}", str(i)) else int(i) for i in new_df.iloc[1]]
+    sample_data3 = [round(i, 2) if re.search("(\.)[\d]{2,}", str(i)) else int(i) for i in new_df.iloc[2]]
+    sample_data4 = [round(i, 2) if re.search("(\.)[\d]{2,}", str(i)) else int(i) for i in new_df.iloc[3]]
+    sample_data5 = [round(i, 2) if re.search("(\.)[\d]{2,}", str(i)) else int(i) for i in new_df.iloc[4]]
     # print(sample_data1)
     return render(request, "selected_features.html",
                   {"columns": columns, 'sample_data1': sample_data1, 'sample_data2': sample_data2,
