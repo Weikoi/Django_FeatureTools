@@ -36,6 +36,6 @@ python manage.py runserver
 
 <div align="center"> <img src="./pic/5.jpg"/> </div>
 
-
+对于上游数据源，要求是dict保存的dataframe格式。
 
 
