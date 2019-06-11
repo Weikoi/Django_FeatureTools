@@ -42,7 +42,7 @@
             <tbody>
 
             <tr>
-                <td>customer_id</td>
+                <td>{{ res.0 }}</td>
                 {% for result in res|slice:"1:" %}
                     <td><input type="checkbox" name="selected" value="{{ result }}">{{ result }}</td>
                 {% endfor %}

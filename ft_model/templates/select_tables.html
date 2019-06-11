@@ -34,66 +34,25 @@
         </div>
     </nav>
 
-
-
 <form action="/variables_type/" method="post">
     {% csrf_token %}
-    <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
-        <h3 align="center">transactions</h3>
-        <table class="table table-bordered">
-            <tbody>
+    {% for key, value in columns_dict.items %}
+        <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
+            <h3 align="center">{{ key }}</h3>
+            <table class="table table-bordered">
+                <tbody>
 
-            <tr>
-                {% for result in transactions_columns %}
-                    <td><input type="checkbox" name="transactions" value="{{ result }}" checked="checked">{{ result }}
-                    </td>
-                {% endfor %}
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <br>
-    <div
-            style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
-        <h3 align="center">sessions</h3>
-        <table class="table table-bordered">
-            <tbody>
-
-            <tr>
-                {% for result in sessions_columns %}
-                    <td><input type="checkbox" name="sessions" value="{{ result }}" checked="checked">{{ result }}</td>
-                {% endfor %}
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <br>
-    <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
-        <h3 align="center">customers</h3>
-        <table class="table table-bordered">
-            <tbody>
-            <tr>
-                {% for result in customers_columns %}
-                    <td><input type="checkbox" name="customers" value="{{ result }}" checked="checked">{{ result }}</td>
-                {% endfor %}
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <br>
-    <div style="white-space: nowrap; overflow: hidden; overflow-x: scroll; -webkit-backface-visibility: hidden; -webkit-overflow-scrolling: touch;">
-        <h3 align="center">products</h3>
-        <table class="table table-bordered">
-            <tbody>
-            <tr>
-                {% for result in products_columns %}
-                    <td><input type="checkbox" name="products" value="{{ result }}" checked="checked">{{ result }}</td>
-                {% endfor %}
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <br>
+                <tr>
+                    {% for result in value %}
+                        <td><input type="checkbox" name="{{ key }}" value="{{ result }}" checked="checked">{{ result }}
+                        </td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <br>
+    {% endfor %}
     <div style="display: flex;justify-content: center;font-size: 3px">
         <input class="btn btn-primary" type="submit" value="提交参数">
         <input class="btn btn-default" type="reset" value="重置参数">

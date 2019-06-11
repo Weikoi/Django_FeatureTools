@@ -7,125 +7,80 @@
     <title>选择特征的类型</title>
     <link rel="stylesheet" href="../static/semantic.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
     <script src="../static/js/jquery.min.js"></script>
     <script src="../static/semantic.js"></script>
     <meta charset="utf-8">
     <title>Title</title>
     <style>
-        .center {text-align: center}
-        td{width:500px;overflow:hidden}
+        .center {
+            text-align: center
+        }
+
+        td {
+            width: 500px;
+            overflow: hidden
+        }
+
+        .title {
+            {#font-family: "微软雅黑";#}
+            font-size: 25px;
+            color: black;
+            font-weight: normal;
+        }
+
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-default">
-        <!-- We use the fluid option here to avoid overriding the fixed width of a normal container within the narrow content columns. -->
-        <div class="container-fluid">
-            <div class="collapse navbar-collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="../select_tables/">数据源字段选择</a></li>
-                    <li  class="active"><a>字段属性选择</a></li>
-                    <li><a>模型参数选择</a></li>
-                    <li><a>生成特征选择</a></li>
-                    <li><a>最终选择的特征</a></li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </div>
-    </nav>
-
-    <form action="/model_parameters/" method="post">
-        {% csrf_token %}
-        <div class="center">
-            <h3>
-            Transactions
-            </h3>
-            {% for result in transactions_columns %}
+<nav class="navbar navbar-default">
+    <!-- We use the fluid option here to avoid overriding the fixed width of a normal container within the narrow content columns. -->
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="../select_tables/">数据源字段选择</a></li>
+                <li class="active"><a>字段属性选择</a></li>
+                <li><a>模型参数选择</a></li>
+                <li><a>生成特征选择</a></li>
+                <li><a>最终选择的特征</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div>
+</nav>
+<form action="/model_parameters/" method="post">
+    {% csrf_token %}
+    <div class="center">
+        {% for key, value in columns_dict.items %}
+            <span class="title">
+                {{ key }}
+                </span><input type="radio" name="target" value="{{ key }}">
+            {% for result in value %}
                 <div>{{ result }}</div>
-                <select name="transactions_types">
-                    <option value="Index">Index</option>
-                    <option value="Id">Id</option>
-                    <option value="TimeIndex">TimeIndex</option>
-                    <option value="DatetimeTimeIndex">DatetimeTimeIndex</option>
-                    <option value="NumericTimeIndex">NumericTimeIndex</option>
-                    <option value="Datetime">Datetime</option>
-                    <option value="Numeric">Numeric</option>
-                    <option value="Categorical">Categorical</option>
-                    <option value="Ordinal">Ordinal</option>
-                    <option value="Boolean">Boolean</option>
+                <select name="{{ key }}">
+                    <option value="featuretools.variable_types.Index">Index</option>
+                    <option value="featuretools.variable_types.Id">Id</option>
+                    <option value="featuretools.variable_types.TimeIndex">TimeIndex</option>
+                    <option value="featuretools.variable_types.DatetimeTimeIndex">DatetimeTimeIndex</option>
+                    <option value="featuretools.variable_types.NumericTimeIndex">NumericTimeIndex</option>
+                    <option value="featuretools.variable_types.Datetime">Datetime</option>
+                    <option value="featuretools.variable_types.Numeric">Numeric</option>
+                    <option value="featuretools.variable_types.Categorical">Categorical</option>
+                    <option value="featuretools.variable_types.Ordinal">Ordinal</option>
+                    <option value="featuretools.variable_types.Boolean">Boolean</option>
                 </select>
             {% endfor %}
 
             <hr>
-            <h3>
-            Sessions
-            </h3>
-            {% for result in sessions_columns %}
-                <div>{{ result }}</div>
-                <select name="sessions_types">
-                    <option value="Index">Index</option>
-                    <option value="Id">Id</option>
-                    <option value="TimeIndex">TimeIndex</option>
-                    <option value="DatetimeTimeIndex">DatetimeTimeIndex</option>
-                    <option value="NumericTimeIndex">NumericTimeIndex</option>
-                    <option value="Datetime">Datetime</option>
-                    <option value="Numeric">Numeric</option>
-                    <option value="Categorical">Categorical</option>
-                    <option value="Ordinal">Ordinal</option>
-                    <option value="Boolean">Boolean</option>
-                </select>
-                <br>
-            {% endfor %}
-            <hr>
-            <h3>
-            Customers
-            </h3>
-            {% for result in customers_columns %}
-                <div>{{ result }}</div>
-                <select name="customers_types">
-                    <option value="Index">Index</option>
-                    <option value="Id">Id</option>
-                    <option value="TimeIndex">TimeIndex</option>
-                    <option value="DatetimeTimeIndex">DatetimeTimeIndex</option>
-                    <option value="NumericTimeIndex">NumericTimeIndex</option>
-                    <option value="Datetime">Datetime</option>
-                    <option value="Numeric">Numeric</option>
-                    <option value="Categorical">Categorical</option>
-                    <option value="Ordinal">Ordinal</option>
-                    <option value="Boolean">Boolean</option>
-                </select>
-                <br>
-            {% endfor %}
-            <hr>
-            <h3>
-            products
-            </h3>
-            {% for result in products_columns %}
-                <div>{{ result }}</div>
-                <select name="products_types">
-                    <option value="Index">Index</option>
-                    <option value="Id">Id</option>
-                    <option value="TimeIndex">TimeIndex</option>
-                    <option value="DatetimeTimeIndex">DatetimeTimeIndex</option>
-                    <option value="NumericTimeIndex">NumericTimeIndex</option>
-                    <option value="Datetime">Datetime</option>
-                    <option value="Numeric">Numeric</option>
-                    <option value="Categorical">Categorical</option>
-                    <option value="Ordinal">Ordinal</option>
-                    <option value="Boolean">Boolean</option>
-                </select>
-                <br>
-            {% endfor %}
-            <hr>
-            <br>
-            <div style="display: flex;justify-content: center;font-size: 3px">
-                <input class="btn btn-primary" type="submit" value="提交参数">
-            </div>
+        {% endfor %}
+        <br>
+        <div style="display: flex;justify-content: center;font-size: 3px">
+            <input class="btn btn-primary" type="submit" value="提交参数">
         </div>
-        <br>
-        <br>
-    </form>
+    </div>
+    <br>
+    <br>
+</form>
 
 </body>
 

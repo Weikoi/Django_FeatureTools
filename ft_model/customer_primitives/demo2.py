@@ -13,46 +13,44 @@ from featuretools.variable_types import DatetimeTimeIndex, Numeric
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.max_rows', 500)
 
-
 data = ft.demo.load_mock_customer()
-transactions_df = data["transactions"].merge(
-    data["sessions"]).merge(data["customers"]).merge(data["products"])
+# transactions_df = data["transactions"].merge( data["sessions"]).merge(data["customers"]).merge(data["products"])
+transactions_df = data["customers"].merge(data["sessions"]).merge(data["transactions"]).merge(data["products"])
 
 # %%
 es = ft.EntitySet()
-es = es.entity_from_dataframe(entity_id="transactions",
+es = es.entity_from_dataframe(entity_id="customers",
                               dataframe=transactions_df,
-                              index="transaction_time",
+                              # index="transaction_time",
                               variable_types={"product_id": ft.variable_types.Categorical,
                                               "zip_code": ft.variable_types.ZIPCode})
 
-es = es.normalize_entity(base_entity_id="transactions",
+es = es.normalize_entity(base_entity_id="customers",
                          new_entity_id="sessions",
                          index="session_id",
                          make_time_index="session_start",
                          additional_variables=["device", "customer_id", "zip_code", "session_start", "join_date"])
 
-es = es.normalize_entity(base_entity_id="sessions",
-                         new_entity_id="customers",
-                         index="customer_id",
+es = es.normalize_entity(base_entity_id="customers",
+                         new_entity_id="transactions",
+                         index="transaction_id",
                          make_time_index="join_date",
                          additional_variables=["zip_code", "join_date"])
 
-es = es.normalize_entity(base_entity_id="transactions",
+es = es.normalize_entity(base_entity_id="customers",
                          new_entity_id="products",
                          index="product_id",
                          additional_variables=["brand"])
 
 es
 
-#%%
+# %%
 
 
 # feature_matrix1, feature_defs1 = ft.dfs(entityset=es, target_entity="products")
 #
 # feature_matrix2, feature_defs2 = ft.dfs(entityset=es, target_entity="customers", agg_primitives=["count"],
 #                                         trans_primitives=["month"], max_depth=1)
-
 
 
 # # %%
@@ -193,7 +191,8 @@ feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity="customers",
 
 # %%
 import sys
-print(sys.getsizeof(feature_matrix)/1024)
+
+print(sys.getsizeof(feature_matrix) / 1024)
 print(sys.getsizeof(feature_defs))
 
 # %%
@@ -242,7 +241,7 @@ print(sys.getsizeof(feature_defs))
 # print(es)
 window_fm, window_features = ft.dfs(entityset=es,
                                     target_entity="transactions",
-                                    agg_primitives=["max",rise_count],
+                                    agg_primitives=["max", rise_count],
                                     trans_primitives=["month"]
                                     # trans_primitives=[demo],
                                     # cutoff_time=cutoff_times,
@@ -254,4 +253,3 @@ window_fm, window_features = ft.dfs(entityset=es,
 print(sys.getsizeof(window_fm))
 # %%
 print(sys.getsizeof(window_features))
-
