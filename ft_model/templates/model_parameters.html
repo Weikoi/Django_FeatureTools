@@ -4,7 +4,25 @@
     <meta charset="utf-8">
 {#    <link href="../static/style.css" rel='stylesheet' type='text/css'/>#}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+    .center {
+        text-align: center
+    }
 
+    td {
+        width: 500px;
+        overflow: hidden
+    }
+
+    .title {
+        font-size: 25px;
+        color: black;
+        font-weight: normal;
+    }
+    .alert {
+        color: red;
+    }
+    </style>
 </head>
 
 <body>
@@ -71,20 +89,20 @@
                 <input type="checkbox" name="trans_pri" value="day" checked="checked">day
                 <input type="checkbox" name="trans_pri" value="hour" checked="checked">hour
                 <input type="checkbox" name="trans_pri" value="minute" checked="checked">minute
-                <input type="checkbox" name="trans_pri" value="isweekend" color="red">isweekend
-                <input type="checkbox" name="trans_pri" value="weekday">weekday
+                <input type="checkbox" name="trans_pri" value="isweekend" class="alert">isweekend
+                <input type="checkbox" name="trans_pri" value="weekday" class="alert">weekday
                 <input type="checkbox" name="trans_pri" value="absolute" checked="checked">absolute
-                <input type="checkbox" name="trans_pri" value="timesince" >timesince
+                <input type="checkbox" name="trans_pri" value="timesince" class="alert">timesince
                 <input type="checkbox" name="trans_pri" value="diff" checked="checked">diff
-                <input type="checkbox" name="trans_pri" value="TimeSincePrevious">TimeSincePrevious
-                <input type="checkbox" name="trans_pri" value="NumCharacters">NumCharacters
-                <input type="checkbox" name="trans_pri" value="NumWords">NumWords
+                <input type="checkbox" name="trans_pri" value="TimeSincePrevious" class="alert">TimeSincePrevious
+                <input type="checkbox" name="trans_pri" value="NumCharacters" class="alert">NumCharacters
+                <input type="checkbox" name="trans_pri" value="NumWords" class="alert">NumWords
             </div>
             <br>
         </div>
         <div style="display: flex;justify-content: center;font-size: 3px">
             <input class="btn btn-primary" type="submit" value="提交参数">
-            <input class="btn btn-default" type="reset" value="重置参数">
+            <input class="btn btn-default" type="reset" value="默认参数">
         </div>
 
         <div class="clear"></div>

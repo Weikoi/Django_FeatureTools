@@ -13,6 +13,13 @@ from featuretools.variable_types import DatetimeTimeIndex, Numeric
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.max_rows', 500)
 data = ft.demo.load_mock_customer()
+
+print(list(data.values())[0])
+
+
+
+
+#%%
 transactions_df = data["transactions"].merge(
     data["sessions"]).merge(data["customers"]).merge(data["products"])
 

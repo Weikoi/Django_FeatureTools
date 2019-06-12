@@ -24,7 +24,6 @@
         }
 
         .title {
-            {#font-family: "微软雅黑";#}
             font-size: 25px;
             color: black;
             font-weight: normal;
@@ -49,12 +48,13 @@
     </div>
 </nav>
 <form action="/model_parameters/" method="post">
+    <p class="center">表名后的单选框用于选择特征融合的对象</p>
     {% csrf_token %}
     <div class="center">
         {% for key, value in columns_dict.items %}
             <span class="title">
                 {{ key }}
-                </span><input type="radio" name="target" value="{{ key }}">
+            </span><input type="radio" name="target" value="{{ key }}" checked="checked">
             {% for result in value %}
                 <div>{{ result }}</div>
                 <select name="{{ key }}">
@@ -81,6 +81,20 @@
     <br>
     <br>
 </form>
+<script>
+    window.onload = function () {
+
+        var ele;
+        var demo_list = [{{ columns_dict.keys }}];
+        var index = Math.floor(Math.random() * demo_list.length);
+        ele = document.querySelector("input[type='radio'][name={{ columns_dict.keys.0 }}]");
+
+        alert(ele);
+        if (ele) {
+            ele.checked = true;
+        }
+    }
+</script>
 
 </body>
 

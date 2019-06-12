@@ -132,11 +132,15 @@ def get_results(request):
     # 原表全部join在一起之后再抽取实体
     data = ft.demo.load_mock_customer()
     # transactions_df = data["transactions"].merge(data["sessions"]).merge(data["customers"]).merge(data["products"])
-    transactions_df = data["customers"].merge(data["sessions"]).merge(data["transactions"]).merge(data["products"])
+
+    data_df = list(data.values())[0]
+
+    for i in list(data.values())[1:]:
+        data_df = data_df.merge(i)
     es = ft.EntitySet()
 
     # 构造base entity, 将第一个表名作为基础实体名称
-    es = es.entity_from_dataframe(entity_id=base_entity, dataframe=transactions_df, index=base_index,
+    es = es.entity_from_dataframe(entity_id=base_entity, dataframe=data_df, index=base_index,
                                   # time_index="transaction_time",
                                   variable_types=total_type_dict)
 
