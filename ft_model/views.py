@@ -50,10 +50,15 @@ def model_parameters(request):
     # print(products_types)
     types_list = []
     name_list = []
+
+    # target 是融合的对象
     columns_dict = request.COOKIES['columns_dict']
     target = request.POST.get("target")
     print("++++++")
     print(target)
+    print("++++++")
+    print("++++++")
+    print(columns_dict)
     print("++++++")
     for k, v in eval(columns_dict).items():
         types_list.append(request.POST.getlist(k))
@@ -63,8 +68,16 @@ def model_parameters(request):
     response = render(request, "model_parameters.html",
                       {"types_dict": types_dict,
                        "columns_dict": columns_dict, })
-
+    # print(types_dict)
+    # target_id = ''
+    # for type_i, column_i in zip(types_dict[target], columns_dict[target]):
+    #     if 'Index' in type_i:
+    #         target_id = column_i
+    # print("=============")
+    # print(target_id)
+    # print("=============")
     response.set_cookie('types_dict', types_dict)
+    # response.set_cookie('target_id', target_id)
     response.set_cookie('target', target)
     return response
 
@@ -73,6 +86,7 @@ def model_parameters(request):
 def get_results(request):
     # print("===================================================================================================")
     import featuretools as ft
+
     import featuretools
     import pandas as pd
     import numpy as np
@@ -153,6 +167,10 @@ def get_results(request):
             if i in v:
                 v.remove(i)
                 index = i
+
+        print("++++++++++++++++++++")
+        print(index)
+        print("++++++++++++++++++++")
         # print("=========")
         # print(k)
         # print(index)
@@ -240,36 +258,46 @@ def get_results(request):
     sample_data3 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[2]]
     sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[3]]
     sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[4]]
-
-    return render(request, 'get_results.html', {'res': res,
-                                                'sample_data1': sample_data1,
-                                                'sample_data2': sample_data2,
-                                                'sample_data3': sample_data3,
-                                                'sample_data4': sample_data4,
-                                                'sample_data5': sample_data5})
+    response = render(request, 'get_results.html', {'res': res,
+                                                    'sample_data1': sample_data1,
+                                                    'sample_data2': sample_data2,
+                                                    'sample_data3': sample_data3,
+                                                    'sample_data4': sample_data4,
+                                                    'sample_data5': sample_data5})
+    response.set_cookie('target_id', res[0])
+    return response
 
 
 # 函数selected_features用来处理特征选择提交后服务器响应的结果
 def selected_features(request):
     import re
     selected = request.POST.getlist('selected')
+    target_id = request.COOKIES['target_id']
     columns = list(selected)
-    columns.insert(0, 'customer_id')
+    columns.insert(0, target_id)
     import pandas as pd
     df = pd.read_csv("all_features.csv")
     # print(columns)
     new_df = df[columns]
     # print(new_df)
     new_df.to_csv("selected_features.csv", index=False)
+
     # print(new_df.iloc[0])
 
     # 显示的时候由于pandas中全部统一处理成float，导致ID之类的整形数变成带小数点的，目前没有找到更好的解决办法，
     # 只好使用正则表达式进行区分打印，注意，这只是打印，与存储无关。
+
+    # print("+_++__+_+_+_+_+_+_+_+_+_")
+    # print(new_df.iloc[0])
+    # print("+_++__+_+_+_+_+_+_+_+_+_")
+
     def transfer(data_sample):
         return_list = []
         for i in data_sample:
             if i is None:
                 return_list.append(None)
+            if isinstance(i, str):
+                return_list.append(i)
             elif re.search(r"\.0\b", str(i)):
                 return_list.append(int(i))
             else:
