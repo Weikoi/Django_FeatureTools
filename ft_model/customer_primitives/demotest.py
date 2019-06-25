@@ -25,7 +25,7 @@ print(sessions_columns)
 print(customers_columns)
 print(products_columns)
 
-type_dict1 = {k: v for k , v in zip(transactions_columns,transactions_types)}
+type_dict1 = {k: v for k, v in zip(transactions_columns, transactions_types)}
 print(type_dict1)
 # type_dict2 = {k: eval(v) for k in sessions_columns for v in sessions_types}
 # type_dict3 = {k: eval(v) for k in customers_columns for v in customers_types}

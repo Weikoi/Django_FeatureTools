@@ -54,12 +54,12 @@ def model_parameters(request):
     # target 是融合的对象
     columns_dict = request.COOKIES['columns_dict']
     target = request.POST.get("target")
-    print("++++++")
-    print(target)
-    print("++++++")
-    print("++++++")
-    print(columns_dict)
-    print("++++++")
+    # print("++++++")
+    # print(target)
+    # print("++++++")
+    # print("++++++")
+    # print(columns_dict)
+    # print("++++++")
     for k, v in eval(columns_dict).items():
         types_list.append(request.POST.getlist(k))
         name_list.append(k)
@@ -84,188 +84,196 @@ def model_parameters(request):
 
 # 函数get_results用来处理模型相关参数提交后服务器响应的结果
 def get_results(request):
-    # print("===================================================================================================")
-    import featuretools as ft
+    try:
+        import featuretools as ft
+        import pandas as pd
+        import numpy as np
+        from featuretools.primitives import make_trans_primitive, make_agg_primitive
 
-    import featuretools
-    import pandas as pd
-    import numpy as np
-    from featuretools.primitives import make_trans_primitive, make_agg_primitive
+        # 数据源相关的参数
+        types_dict = eval(request.COOKIES['types_dict'])
+        columns_dict = eval(request.COOKIES['columns_dict'])
+        target = request.COOKIES['target']
 
-    # 数据源相关的参数
-    types_dict = eval(request.COOKIES['types_dict'])
-    columns_dict = eval(request.COOKIES['columns_dict'])
-    target = request.COOKIES['target']
+        # todo: 如何决定 base entity?
+        # todo 目前思路是由 id 类型最多的 entity 来做 base entity
+        base_entity = ''
+        base_index = ''
+        for k, v in types_dict.items():
+            count = 0
+            max = 0
+            index = ''
+            for i in v:
+                if '.Id' in str(i):
+                    count += 1
+                if '.Index' in str(i):
+                    index = i
+            if count > max:
+                base_entity = k
+                base_index = i
 
-    # todo: 如何决定 base entity?
-    # todo 目前思路是由 id 类型最多的 entity 来做 base entity
-    base_entity = ''
-    base_index = ''
-    for k, v in types_dict.items():
-        count = 0
-        max = 0
-        index = ''
-        for i in v:
-            if '.Id' in str(i):
-                count += 1
-            if '.Index' in str(i):
-                index = i
-        if count > max:
-            base_entity = k
-            base_index = i
+        # 把columns 和对应的 类型拼接成字典，存在一个列表中,并且找到base_index
+        types_dict_list = []
+        entity_name_list = []
+        for key, values1, values2 in zip(columns_dict.keys(), columns_dict.values(), types_dict.values()):
+            types_dict_list.append({k: eval(v) for k, v in zip(values1, values2)})
+            entity_name_list.append(key)
+            if key == base_entity:
+                for k, v in zip(values2, values1):
+                    if '.Index' in k:
+                        base_index = v
 
-    # 把columns 和对应的 类型拼接成字典，存在一个列表中,并且找到base_index
-    types_dict_list = []
-    entity_name_list = []
-    for key, values1, values2 in zip(columns_dict.keys(), columns_dict.values(), types_dict.values()):
-        types_dict_list.append({k: eval(v) for k, v in zip(values1, values2)})
-        entity_name_list.append(key)
-        if key == base_entity:
-            for k, v in zip(values2, values1):
-                if '.Index' in k:
-                    base_index = v
+        # print("++++++++++++++++")
+        # print(base_entity, base_index)
+        # print("++++++++++++++++")
+        # print(types_dict_list)
+        # print(entity_name_list)
 
-    # print("++++++++++++++++")
-    # print(base_entity, base_index)
-    # print("++++++++++++++++")
-    # print(types_dict_list)
-    # print(entity_name_list)
+        # 自动识别标记为Index的特征，并作为抽取实体的index参数，传入模型
+        # 把所有的类型字典拼成一个大字典
+        index_list = []
+        total_type_dict = {}
+        for each_dict in types_dict_list:
+            total_type_dict.update(each_dict)
+            for k, v in each_dict.items():
+                if '.Index' in str(v):
+                    index_list.append(k)
+        print(index_list)
+        # print(total_type_dict)
 
-    # 自动识别标记为Index的特征，并作为抽取实体的index参数，传入模型
-    # 把所有的类型字典拼成一个大字典
-    index_list = []
-    total_type_dict = {}
-    for each_dict in types_dict_list:
-        total_type_dict.update(each_dict)
-        for k, v in each_dict.items():
-            if '.Index' in str(v):
-                index_list.append(k)
-    print(index_list)
-    # print(total_type_dict)
+        # 原表全部join在一起之后再抽取实体
+        data = ft.demo.load_mock_customer()
+        # transactions_df = data["transactions"].merge(data["sessions"]).merge(data["customers"]).merge(data["products"])
 
-    # 原表全部join在一起之后再抽取实体
-    data = ft.demo.load_mock_customer()
-    # transactions_df = data["transactions"].merge(data["sessions"]).merge(data["customers"]).merge(data["products"])
+        data_df = list(data.values())[0]
 
-    data_df = list(data.values())[0]
+        for i in list(data.values())[1:]:
+            data_df = data_df.merge(i)
+        es = ft.EntitySet()
 
-    for i in list(data.values())[1:]:
-        data_df = data_df.merge(i)
-    es = ft.EntitySet()
+        # 构造base entity, 将第一个表名作为基础实体名称
+        es = es.entity_from_dataframe(entity_id=base_entity, dataframe=data_df, index=base_index,
+                                      # time_index="transaction_time",
+                                      variable_types=total_type_dict)
 
-    # 构造base entity, 将第一个表名作为基础实体名称
-    es = es.entity_from_dataframe(entity_id=base_entity, dataframe=data_df, index=base_index,
-                                  # time_index="transaction_time",
-                                  variable_types=total_type_dict)
+        # 基于base entity抽取实体,逻辑比较复杂，基本逻辑是作为base entity的字段，跳过实体抽取，其余的将index 字段单独存储，设为index参数
+        for k, v in columns_dict.items():
+            if k == base_entity:
+                continue
+            index = ''
+            for i in index_list:
+                if i in v:
+                    v.remove(i)
+                    index = i
 
-    # 基于base entity抽取实体,逻辑比较复杂，基本逻辑是作为base entity的字段，跳过实体抽取，其余的将index 字段单独存储，设为index参数
-    for k, v in columns_dict.items():
-        if k == base_entity:
-            continue
-        index = ''
-        for i in index_list:
-            if i in v:
-                v.remove(i)
-                index = i
+            # print("++++++++++++++++++++")
+            # print(index)
+            # print("++++++++++++++++++++")
+            # print("=========")
+            # print(k)
+            # print(index)
+            # print(v)
+            # print("=========")
+            es = es.normalize_entity(base_entity_id=base_entity,
+                                     new_entity_id=k,
+                                     index=index,
+                                     # make_time_index="session_start",
+                                     additional_variables=v)
 
-        print("++++++++++++++++++++")
-        print(index)
-        print("++++++++++++++++++++")
-        # print("=========")
-        # print(k)
-        # print(index)
-        # print(v)
-        # print("=========")
-        es = es.normalize_entity(base_entity_id=base_entity,
-                                 new_entity_id=k,
-                                 index=index,
-                                 # make_time_index="session_start",
-                                 additional_variables=v)
+        """
+        自定义agg_primitives:
+        改写time since last，原函数为秒，现在改为小时输出
+        """
 
-    """
-    自定义agg_primitives:
-    改写time since last，原函数为秒，现在改为小时输出
-    """
+        def time_since_last_by_hour(values, time=None):
+            time_since = time - values.iloc[-1]
+            return time_since.total_seconds() / 3600
 
-    def time_since_last_by_hour(values, time=None):
-        time_since = time - values.iloc[-1]
-        return time_since.total_seconds() / 3600
+        Time_since_last_by_hour = make_agg_primitive(function=time_since_last_by_hour,
+                                                     input_types=[ft.variable_types.DatetimeTimeIndex],
+                                                     return_type=ft.variable_types.Numeric,
+                                                     uses_calc_time=True)
 
-    Time_since_last_by_hour = make_agg_primitive(function=time_since_last_by_hour,
-                                                 input_types=[ft.variable_types.DatetimeTimeIndex],
-                                                 return_type=ft.variable_types.Numeric,
-                                                 uses_calc_time=True)
+        """
+        自定义trans_primitives:
+        添加log e 的自然对数
+        """
+        import numpy as np
 
-    """
-    自定义trans_primitives:
-    添加log e 的自然对数
-    """
-    import numpy as np
+        def log(vals):
+            return np.log(vals)
 
-    def log(vals):
-        return np.log(vals)
+        # def generate_name(self, base_feature_names):
+        #     return "-(%s)" % (base_feature_names[0])
+        log = make_trans_primitive(function=log,
+                                   input_types=[ft.variable_types.Numeric],
+                                   return_type=ft.variable_types.Numeric,
+                                   # uses_calc_time=True,
+                                   description="Calculates the log of the value.",
+                                   name="log")
 
-    # def generate_name(self, base_feature_names):
-    #     return "-(%s)" % (base_feature_names[0])
-    log = make_trans_primitive(function=log,
-                               input_types=[ft.variable_types.Numeric],
-                               return_type=ft.variable_types.Numeric,
-                               # uses_calc_time=True,
-                               description="Calculates the log of the value.",
-                               name="log")
+        # 模型相关的参数
+        max_depth = request.POST['max_depth']
+        agg_pri = request.POST.getlist('agg_pri')
+        agg_pri_customer = request.POST.getlist('agg_pri_customer')
+        trans_pri_customer = request.POST.getlist('trans_pri_customer')
+        trans_pri = request.POST.getlist('trans_pri')
+        context = {'max_depth': max_depth, 'agg_pri': agg_pri, 'trans_pri': trans_pri}
 
-    # 模型相关的参数
-    max_depth = request.POST['max_depth']
-    agg_pri = request.POST.getlist('agg_pri')
-    agg_pri_customer = request.POST.getlist('agg_pri_customer')
-    trans_pri_customer = request.POST.getlist('trans_pri_customer')
-    trans_pri = request.POST.getlist('trans_pri')
-    context = {'max_depth': max_depth, 'agg_pri': agg_pri, 'trans_pri': trans_pri}
+        pd.set_option('display.max_columns', 20)
 
-    pd.set_option('display.max_columns', 20)
+        # 将前端页面的提交参数，保存为agg_pri列表
+        agg_pri = context['agg_pri']
+        trans_pri = context['trans_pri']
 
-    # 将前端页面的提交参数，保存为agg_pri列表
-    agg_pri = context['agg_pri']
-    trans_pri = context['trans_pri']
+        # 如果勾选了参数，加上自定义的Time_since_last_by_hour
+        if 'Time_since_last_by_hour' in agg_pri_customer:
+            agg_pri.append(Time_since_last_by_hour)
+        if 'log_e' in trans_pri_customer:
+            trans_pri.append(log)
 
-    # 如果勾选了参数，加上自定义的Time_since_last_by_hour
-    if 'Time_since_last_by_hour' in agg_pri_customer:
-        agg_pri.append(Time_since_last_by_hour)
-    if 'log_e' in trans_pri_customer:
-        trans_pri.append(log)
+        # 生成新的特征融合矩阵
+        feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity=target,
+                                              agg_primitives=agg_pri,
+                                              trans_primitives=trans_pri,
+                                              max_depth=int(context['max_depth']))
 
-    # 生成新的特征融合矩阵
-    feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity=target,
-                                          agg_primitives=agg_pri,
-                                          trans_primitives=trans_pri,
-                                          max_depth=int(context['max_depth']))
+        # 将索引作为第一列插入数据矩阵
+        feature_matrix = feature_matrix.reset_index()
+        new_columns = feature_matrix.columns
 
-    # 将索引作为第一列插入数据矩阵
-    feature_matrix = feature_matrix.reset_index()
-    new_columns = feature_matrix.columns
-
-    # 保存数据矩阵,注意在特征选择界面，没有 customer_id 作为选项，因为这只是索引
-    feature_matrix.to_csv("all_features.csv", index=False)
-    # print(feature_matrix.head(5))
-    res = []
-    for i in new_columns:
-        res.append(str(i))
-    print(res[0])
-
-    # 将所有的浮点数精度调整到小数点后两位
-    sample_data1 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[0]]
-    sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[1]]
-    sample_data3 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[2]]
-    sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[3]]
-    sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[4]]
-    response = render(request, 'get_results.html', {'res': res,
-                                                    'sample_data1': sample_data1,
-                                                    'sample_data2': sample_data2,
-                                                    'sample_data3': sample_data3,
-                                                    'sample_data4': sample_data4,
-                                                    'sample_data5': sample_data5})
-    response.set_cookie('target_id', res[0])
-    return response
+        # 保存数据矩阵,注意在特征选择界面，没有 customer_id 作为选项，因为这只是索引
+        feature_matrix.to_csv("all_features.csv", index=False)
+        # print(feature_matrix.head(5))
+        from .columns2NLP import columns2NLP
+        res = []
+        nlp = []
+        for i in new_columns:
+            res.append(str(i))
+            nlp.append(columns2NLP(str(i)))
+        # print(res[0])
+        print("======================")
+        print(res)
+        print(nlp)
+        print("======================")
+        # 将所有的浮点数精度调整到小数点后两位
+        sample_data1 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[0]]
+        sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[1]]
+        sample_data3 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[2]]
+        sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[3]]
+        sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[4]]
+        response = render(request, 'get_results.html', {'res': res,
+                                                        'nlp':nlp,
+                                                        'sample_data1': sample_data1,
+                                                        'sample_data2': sample_data2,
+                                                        'sample_data3': sample_data3,
+                                                        'sample_data4': sample_data4,
+                                                        'sample_data5': sample_data5})
+        response.set_cookie('target_id', res[0])
+        return response
+    except Exception as e:
+        response = render(request, 'erro.html', {'erro': e})
+        return response
 
 
 # 函数selected_features用来处理特征选择提交后服务器响应的结果

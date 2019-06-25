@@ -47,6 +47,11 @@
                     <td><input type="checkbox" name="selected" value="{{ result }}">{{ result }}</td>
                 {% endfor %}
             </tr>
+            <tr>
+                {% for result in nlp %}
+                    <td>{{ result }}</td>
+                {% endfor %}
+            </tr>
 
             <tr>
                 {% for sample in sample_data1 %}
