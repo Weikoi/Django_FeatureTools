@@ -243,6 +243,7 @@ def get_results(request):
         new_columns = feature_matrix.columns
 
         # 保存数据矩阵,注意在特征选择界面，没有 customer_id 作为选项，因为这只是索引
+        # nlp 数组是将primitives替换为中文后的表头，一并显示在第二行
         feature_matrix.to_csv("all_features.csv", index=False)
         # print(feature_matrix.head(5))
         from .columns2NLP import columns2NLP
@@ -252,10 +253,10 @@ def get_results(request):
             res.append(str(i))
             nlp.append(columns2NLP(str(i)))
         # print(res[0])
-        print("======================")
-        print(res)
-        print(nlp)
-        print("======================")
+        # print("======================")
+        # print(res)
+        # print(nlp)
+        # print("======================")
         # 将所有的浮点数精度调整到小数点后两位
         sample_data1 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[0]]
         sample_data2 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[1]]
