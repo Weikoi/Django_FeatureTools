@@ -1,4 +1,5 @@
 def columns2NLP(raw_data):
+    raw_data = raw_data.replace("MINUTE", "分钟")
     raw_data = raw_data.replace("COUNT", "统计个数")
     raw_data = raw_data.replace("MEAN", "均值")
     raw_data = raw_data.replace("SUM", "求和")
@@ -26,7 +27,7 @@ def columns2NLP(raw_data):
     raw_data = raw_data.replace("PERCENTILE", "百分位数")
     raw_data = raw_data.replace("TIME_SINCE", "距指定日期时间")
     raw_data = raw_data.replace("SECOND", "秒")
-    raw_data = raw_data.replace("MINUTE", "分钟")
+
     raw_data = raw_data.replace("WEEKDAY", "当周第几天")
     raw_data = raw_data.replace("IS_WEEKEND", "是否周末")
     raw_data = raw_data.replace("HOUR", "小时")
