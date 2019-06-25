@@ -20,7 +20,8 @@ def select_tables(request):
     import numpy as np
     from featuretools.primitives import make_trans_primitive, make_agg_primitive
     from featuretools.variable_types import DatetimeTimeIndex, Numeric
-    data = ft.demo.load_mock_customer()
+    import pickle as pk
+    data = pk.load(file=open("./ft_model/demo_data/data_transactions_sessions.pkl", "rb"))
 
     columns_list = []
     name_list = []
@@ -84,7 +85,7 @@ def model_parameters(request):
 
 # 函数get_results用来处理模型相关参数提交后服务器响应的结果
 def get_results(request):
-    try:
+    # try:
         import featuretools as ft
         import pandas as pd
         import numpy as np
@@ -99,18 +100,21 @@ def get_results(request):
         # todo 目前思路是由 id 类型最多的 entity 来做 base entity
         base_entity = ''
         base_index = ''
+
+        max_count = 0
         for k, v in types_dict.items():
             count = 0
-            max = 0
+
             index = ''
             for i in v:
                 if '.Id' in str(i):
                     count += 1
                 if '.Index' in str(i):
                     index = i
-            if count > max:
+            if count > max_count:
                 base_entity = k
-                base_index = i
+                base_index = index
+                max_count = count
 
         # 把columns 和对应的 类型拼接成字典，存在一个列表中,并且找到base_index
         types_dict_list = []
@@ -122,12 +126,6 @@ def get_results(request):
                 for k, v in zip(values2, values1):
                     if '.Index' in k:
                         base_index = v
-
-        # print("++++++++++++++++")
-        # print(base_entity, base_index)
-        # print("++++++++++++++++")
-        # print(types_dict_list)
-        # print(entity_name_list)
 
         # 自动识别标记为Index的特征，并作为抽取实体的index参数，传入模型
         # 把所有的类型字典拼成一个大字典
@@ -142,17 +140,29 @@ def get_results(request):
         # print(total_type_dict)
 
         # 原表全部join在一起之后再抽取实体
-        data = ft.demo.load_mock_customer()
-        # transactions_df = data["transactions"].merge(data["sessions"]).merge(data["customers"]).merge(data["products"])
+        import pickle as pk
+        data = pk.load(file=open("./ft_model/demo_data/data_transactions_sessions.pkl", "rb"))
+        if len(data) == 0:
+            raise Exception("数据源为空，请检查数据源文件")
+        elif len(data) > 1:
+            data_df = list(data.values())[0]
+            for i in list(data.values())[1:]:
+                data_df = data_df.merge(i)
 
-        data_df = list(data.values())[0]
-
-        for i in list(data.values())[1:]:
-            data_df = data_df.merge(i)
+        elif len(data) == 1:
+            data_df = list(data.values())[0]
         es = ft.EntitySet()
 
+        print("+++++++++++++++++++++++")
+        print("entity_id", base_entity)
+        # print("data_df", data_df)
+        print("base_index", base_index)
+        print("total_type_dict", total_type_dict)
+        print("+++++++++++++++++++++++")
         # 构造base entity, 将第一个表名作为基础实体名称
-        es = es.entity_from_dataframe(entity_id=base_entity, dataframe=data_df, index=base_index,
+        es = es.entity_from_dataframe(entity_id=base_entity,
+                                      dataframe=data_df,
+                                      index=base_index,
                                       # time_index="transaction_time",
                                       variable_types=total_type_dict)
 
@@ -264,7 +274,7 @@ def get_results(request):
         sample_data4 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[3]]
         sample_data5 = [round(i, 2) if isinstance(i, float) else i for i in feature_matrix.iloc[4]]
         response = render(request, 'get_results.html', {'res': res,
-                                                        'nlp':nlp,
+                                                        'nlp': nlp,
                                                         'sample_data1': sample_data1,
                                                         'sample_data2': sample_data2,
                                                         'sample_data3': sample_data3,
@@ -272,9 +282,10 @@ def get_results(request):
                                                         'sample_data5': sample_data5})
         response.set_cookie('target_id', res[0])
         return response
-    except Exception as e:
-        response = render(request, 'erro.html', {'erro': e})
-        return response
+
+    # except Exception as e:
+    #     response = render(request, 'erro.html', {'erro': e})
+    #     return response
 
 
 # 函数selected_features用来处理特征选择提交后服务器响应的结果
