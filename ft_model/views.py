@@ -26,11 +26,9 @@ def select_tables(request):
     # 将接口改成对应CSV的api
     if not os.path.isdir(os.getcwd() + "\\demo_data"):
         os.mkdir(os.getcwd() + "\\demo_data")
-    print(os.getcwd())
-    print(os.listdir())
     os.chdir(os.getcwd() + "\\demo_data")
     print(os.getcwd())
-    print(os.getcwd())
+    print(os.listdir(os.getcwd()))
     regex = re.compile("csv")
     raw_dict = {}
     for file in os.listdir(os.getcwd()):
