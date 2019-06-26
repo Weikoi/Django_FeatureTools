@@ -29,10 +29,9 @@ def select_tables(request):
     os.chdir(os.getcwd() + "\\demo_data")
     regex = re.compile("csv")
     raw_dict = {}
-    for root, dirs, files in os.walk(os.getcwd()):
-        for file in files:
-            if re.search(regex, file):
-                raw_dict[file.split(".")[0]] = pd.read_csv(file)
+    for file in os.listdir(os.getcwd()):
+        if re.search(regex, file):
+            raw_dict[file.split(".")[0]] = pd.read_csv(file)
     data = raw_dict
     os.chdir("..")
 
@@ -168,10 +167,10 @@ def get_results(request):
         os.chdir(os.getcwd() + "\\demo_data")
         regex = re.compile("csv")
         raw_dict = {}
-        for root, dirs, files in os.walk(os.getcwd()):
-            for file in files:
-                if re.search(regex, file):
-                    raw_dict[file.split(".")[0]] = pd.read_csv(file)
+
+        for file in os.listdir(os.getcwd()):
+            if re.search(regex, file):
+                raw_dict[file.split(".")[0]] = pd.read_csv(file)
 
         data = raw_dict
         os.chdir("..")
@@ -214,10 +213,6 @@ def get_results(request):
                 if i in v:
                     v.remove(i)
                     index = i
-
-            # print("++++++++++++++++++++")
-            # print(index)
-            # print("++++++++++++++++++++")
             # print("=========")
             # print(k)
             # print(index)
@@ -293,7 +288,10 @@ def get_results(request):
 
         # 保存数据矩阵,注意在特征选择界面，没有 customer_id 作为选项，因为这只是索引
         # nlp 数组是将primitives替换为中文后的表头，一并显示在第二行
-        feature_matrix.to_csv("all_features.csv", index=False)
+        import os
+        if not os.path.isdir(os.getcwd() + "\\demo_data\\result"):
+            os.mkdir(os.getcwd() + "\\demo_data\\result")
+        feature_matrix.to_csv(".\\demo_data\\result\\all_features.csv", index=False)
         # print(feature_matrix.head(5))
         from .columns2NLP import columns2NLP
         res = []
@@ -335,11 +333,11 @@ def selected_features(request):
     columns = list(selected)
     columns.insert(0, target_id)
     import pandas as pd
-    df = pd.read_csv("all_features.csv")
+    df = pd.read_csv(".\\demo_data\\result\\all_features.csv")
     # print(columns)
     new_df = df[columns]
     # print(new_df)
-    new_df.to_csv("selected_features.csv", index=False)
+    new_df.to_csv(".\\demo_data\\result\\selected_features.csv", index=False)
 
     # print(new_df.iloc[0])
 

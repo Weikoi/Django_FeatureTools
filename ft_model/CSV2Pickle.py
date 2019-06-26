@@ -29,7 +29,11 @@ def csv2pickle():
 
 if __name__ == '__main__':
     os.chdir(os.getcwd() + "\\demo_data")
-    print(os.getcwd())
+    print(os.mkdir("demo_test"))
+    # for root, dirs, files in os.walk(os.getcwd()):
+    #     print(files)
+    for file in os.listdir(os.getcwd()):
+        print(file)
     # csv2pickle()
     os.chdir("..")
     print(os.getcwd())
