@@ -24,9 +24,9 @@ def select_tables(request):
     import re
 
     # 将接口改成对应CSV的api
-    if not os.path.isdir(os.getcwd() + "\\demo_data"):
-        os.mkdir(os.getcwd() + "\\demo_data")
-    os.chdir(os.getcwd() + "\\demo_data")
+    if not os.path.isdir(os.getcwd() + "/demo_data"):
+        os.mkdir(os.getcwd() + "/demo_data")
+    os.chdir(os.getcwd() + "/demo_data")
     print(os.getcwd())
     print(os.listdir(os.getcwd()))
     regex = re.compile("csv")
@@ -164,9 +164,9 @@ def get_results(request):
         # 数据接口改成处理CSV结构
         import os
         import re
-        if not os.path.isdir(os.getcwd() + "\\demo_data"):
-            os.mkdir(os.getcwd() + "\\demo_data")
-        os.chdir(os.getcwd() + "\\demo_data")
+        if not os.path.isdir(os.getcwd() + "/demo_data"):
+            os.mkdir(os.getcwd() + "/demo_data")
+        os.chdir(os.getcwd() + "/demo_data")
         regex = re.compile("csv")
         raw_dict = {}
 
@@ -291,9 +291,9 @@ def get_results(request):
         # 保存数据矩阵,注意在特征选择界面，没有 customer_id 作为选项，因为这只是索引
         # nlp 数组是将primitives替换为中文后的表头，一并显示在第二行
         import os
-        if not os.path.isdir(os.getcwd() + "\\demo_data\\result"):
-            os.mkdir(os.getcwd() + "\\demo_data\\result")
-        feature_matrix.to_csv(".\\demo_data\\result\\all_features.csv", index=False)
+        if not os.path.isdir(os.getcwd() + "/demo_data/result"):
+            os.mkdir(os.getcwd() + "/demo_data/result")
+        feature_matrix.to_csv("./demo_data/result/all_features.csv", index=False)
         # print(feature_matrix.head(5))
         from .columns2NLP import columns2NLP
         res = []
@@ -335,11 +335,11 @@ def selected_features(request):
     columns = list(selected)
     columns.insert(0, target_id)
     import pandas as pd
-    df = pd.read_csv(".\\demo_data\\result\\all_features.csv")
+    df = pd.read_csv("./demo_data/result/all_features.csv")
     # print(columns)
     new_df = df[columns]
     # print(new_df)
-    new_df.to_csv(".\\demo_data\\result\\selected_features.csv", index=False)
+    new_df.to_csv("./demo_data/result/selected_features.csv", index=False)
 
     # print(new_df.iloc[0])
 
