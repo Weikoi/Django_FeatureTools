@@ -20,8 +20,21 @@ def select_tables(request):
     import numpy as np
     from featuretools.primitives import make_trans_primitive, make_agg_primitive
     from featuretools.variable_types import DatetimeTimeIndex, Numeric
-    import pickle as pk
-    data = pk.load(file=open("./ft_model/demo_data/data_transactions_sessions.pkl", "rb"))
+    import os
+    import re
+
+    # 将接口改成对应CSV的api
+    if not os.path.isdir(os.getcwd() + "\\demo_data"):
+        os.mkdir(os.getcwd() + "\\demo_data")
+    os.chdir(os.getcwd() + "\\demo_data")
+    regex = re.compile("csv")
+    raw_dict = {}
+    for root, dirs, files in os.walk(os.getcwd()):
+        for file in files:
+            if re.search(regex, file):
+                raw_dict[file.split(".")[0]] = pd.read_csv(file)
+    data = raw_dict
+    os.chdir("..")
 
     columns_list = []
     name_list = []
@@ -85,7 +98,7 @@ def model_parameters(request):
 
 # 函数get_results用来处理模型相关参数提交后服务器响应的结果
 def get_results(request):
-    # try:
+    try:
         import featuretools as ft
         import pandas as pd
         import numpy as np
@@ -96,12 +109,14 @@ def get_results(request):
         columns_dict = eval(request.COOKIES['columns_dict'])
         target = request.COOKIES['target']
 
-        # todo: 如何决定 base entity?
-        # todo 目前思路是由 id 类型最多的 entity 来做 base entity
+        # 如何决定 base entity?
+        # 目前思路是由 id 类型最多的 entity 来做 base entity
+        # 把对应的表和id个数封装成字典，然后根据个数给表名排逆序，然后按照这个顺序merge表，是为最终思路
         base_entity = ''
         base_index = ''
 
         max_count = 0
+        sorted_dict = {}
         for k, v in types_dict.items():
             count = 0
 
@@ -111,10 +126,15 @@ def get_results(request):
                     count += 1
                 if '.Index' in str(i):
                     index = i
+            sorted_dict[k] = count
             if count > max_count:
                 base_entity = k
                 base_index = index
                 max_count = count
+        sorted_list = sorted(sorted_dict.items(), key=lambda item: item[1], reverse=True)
+        sorted_table_name = [i[0] for i in sorted_list]
+
+        print("sorted_table_name\n", sorted_table_name)
 
         # 把columns 和对应的 类型拼接成字典，存在一个列表中,并且找到base_index
         types_dict_list = []
@@ -140,25 +160,44 @@ def get_results(request):
         # print(total_type_dict)
 
         # 原表全部join在一起之后再抽取实体
-        import pickle as pk
-        data = pk.load(file=open("./ft_model/demo_data/data_transactions_sessions.pkl", "rb"))
+        # 数据接口改成处理CSV结构
+        import os
+        import re
+        if not os.path.isdir(os.getcwd() + "\\demo_data"):
+            os.mkdir(os.getcwd() + "\\demo_data")
+        os.chdir(os.getcwd() + "\\demo_data")
+        regex = re.compile("csv")
+        raw_dict = {}
+        for root, dirs, files in os.walk(os.getcwd()):
+            for file in files:
+                if re.search(regex, file):
+                    raw_dict[file.split(".")[0]] = pd.read_csv(file)
+
+        data = raw_dict
+        os.chdir("..")
+
+        # todo : merge的逻辑比较复杂，要如何执行join操作？？
         if len(data) == 0:
             raise Exception("数据源为空，请检查数据源文件")
         elif len(data) > 1:
-            data_df = list(data.values())[0]
-            for i in list(data.values())[1:]:
-                data_df = data_df.merge(i)
+            data_df = data.pop(sorted_table_name.pop(0))
+            # print(data_df)
+            for i in sorted_table_name:
+                data_df = data_df.merge(data[i])
+            #
+            # for i in list(data.values()):
+            #     data_df = data_df.merge(i)
 
         elif len(data) == 1:
             data_df = list(data.values())[0]
         es = ft.EntitySet()
 
-        print("+++++++++++++++++++++++")
-        print("entity_id", base_entity)
-        # print("data_df", data_df)
-        print("base_index", base_index)
-        print("total_type_dict", total_type_dict)
-        print("+++++++++++++++++++++++")
+        # print("+++++++++++++++++++++++")
+        # print("data_df\n", data_df)
+        # print("entity_id\n", base_entity)
+        # print("base_index\n", base_index)
+        # print("total_type_dict\n", total_type_dict)
+        # print("+++++++++++++++++++++++")
         # 构造base entity, 将第一个表名作为基础实体名称
         es = es.entity_from_dataframe(entity_id=base_entity,
                                       dataframe=data_df,
@@ -283,9 +322,9 @@ def get_results(request):
         response.set_cookie('target_id', res[0])
         return response
 
-    # except Exception as e:
-    #     response = render(request, 'erro.html', {'erro': e})
-    #     return response
+    except Exception as e:
+        response = render(request, 'erro.html', {'erro': e})
+        return response
 
 
 # 函数selected_features用来处理特征选择提交后服务器响应的结果

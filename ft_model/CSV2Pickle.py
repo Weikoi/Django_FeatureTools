@@ -14,14 +14,22 @@ import re
 
 
 def csv2pickle():
-    os.chdir(os.getcwd() + "demo_data")
-
+    if not os.path.isdir(os.getcwd() + "\\demo_data"):
+        os.mkdir(os.getcwd() + "\\demo_data")
+    os.chdir(os.getcwd() + "\\demo_data")
+    print(os.getcwd() + "\\demo_data")
     regex = re.compile("csv")
-    pickle_dict = {}
+    raw_dict = {}
     for root, dirs, files in os.walk(os.getcwd()):
         for file in files:
             if re.search(regex, file):
-                pickle_dict[file.split(".")[0]] = pd.read_csv(file)
+                raw_dict[file.split(".")[0]] = pd.read_csv(file)
+    # print(raw_dict)
 
-    pk.dump(pickle_dict, file=open("data_pickle.pkl", "wb"))
 
+if __name__ == '__main__':
+    os.chdir(os.getcwd() + "\\demo_data")
+    print(os.getcwd())
+    # csv2pickle()
+    os.chdir("..")
+    print(os.getcwd())
