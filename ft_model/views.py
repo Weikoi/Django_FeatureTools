@@ -27,7 +27,9 @@ def select_tables(request):
     if not os.path.isdir(os.getcwd() + "\\demo_data"):
         os.mkdir(os.getcwd() + "\\demo_data")
     print(os.getcwd())
+    print(os.listdir())
     os.chdir(os.getcwd() + "\\demo_data")
+    print(os.getcwd())
     print(os.getcwd())
     regex = re.compile("csv")
     raw_dict = {}
