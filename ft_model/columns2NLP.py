@@ -37,6 +37,7 @@ def columns2NLP(raw_data):
     raw_data = raw_data.replace("YEAR", "年")
     raw_data = raw_data.replace("DIFF", "和上个值之差")
     raw_data = raw_data.replace("TIME_SINCE_PREVIOUS", "距上个时间戳时间")
+    raw_data = raw_data.replace("IS_POSITIVE", "判断为正数")
     raw_data = raw_data.replace("NUM_CHARACTERS", "字符个数")
     raw_data = raw_data.replace("NUM_WORDS", "单词个数")
     raw_data = raw_data.replace("LATITUDE", "纬度")

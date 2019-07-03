@@ -257,6 +257,23 @@ def get_results(request):
                                    # uses_calc_time=True,
                                    description="Calculates the log of the value.",
                                    name="log")
+        """
+        自定义trans_primitives:
+        判断是否为正数
+        """
+        import numpy as np
+
+        def is_positive(vals):
+            return vals > 0
+
+        # def generate_name(self, base_feature_names):
+        #     return "-(%s)" % (base_feature_names[0])
+        is_positive = make_trans_primitive(function=is_positive,
+                                           input_types=[ft.variable_types.Numeric],
+                                           return_type=ft.variable_types.Boolean,
+                                           # uses_calc_time=True,
+                                           description="Calculates if the value positive.",
+                                           name="is_positive")
 
         # 模型相关的参数
         max_depth = request.POST['max_depth']
@@ -271,13 +288,18 @@ def get_results(request):
         # 将前端页面的提交参数，保存为agg_pri列表
         agg_pri = context['agg_pri']
         trans_pri = context['trans_pri']
-
+        print(trans_pri_customer)
         # 如果勾选了参数，加上自定义的Time_since_last_by_hour
         if 'Time_since_last_by_hour' in agg_pri_customer:
             agg_pri.append(Time_since_last_by_hour)
         if 'log_e' in trans_pri_customer:
             trans_pri.append(log)
+        if 'is_positive' in trans_pri_customer:
+            trans_pri.append(is_positive)
+        print("+++++++++++++++++++++++++++++")
 
+        print(trans_pri)
+        print("+++++++++++++++++++++++++++++")
         # 生成新的特征融合矩阵
         feature_matrix, feature_defs = ft.dfs(entityset=es, target_entity=target,
                                               agg_primitives=agg_pri,

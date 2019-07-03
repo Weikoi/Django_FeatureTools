@@ -19,25 +19,24 @@ transactions_df = data["customers"].merge(data["sessions"]).merge(data["transact
 
 # %%
 es = ft.EntitySet()
-es = es.entity_from_dataframe(entity_id="customers",
+es = es.entity_from_dataframe(entity_id="transactions",
                               dataframe=transactions_df,
                               # index="transaction_time",
-                              variable_types={"product_id": ft.variable_types.Categorical,
-                                              "zip_code": ft.variable_types.ZIPCode})
+                              variable_types={"product_id": ft.variable_types.Categorical})
 
-es = es.normalize_entity(base_entity_id="customers",
+es = es.normalize_entity(base_entity_id="transactions",
                          new_entity_id="sessions",
                          index="session_id",
                          make_time_index="session_start",
                          additional_variables=["device", "customer_id", "zip_code", "session_start", "join_date"])
 
-es = es.normalize_entity(base_entity_id="customers",
-                         new_entity_id="transactions",
+es = es.normalize_entity(base_entity_id="transactions",
+                         new_entity_id="customers",
                          index="transaction_id",
                          make_time_index="join_date",
                          additional_variables=["zip_code", "join_date"])
 
-es = es.normalize_entity(base_entity_id="customers",
+es = es.normalize_entity(base_entity_id="transactions",
                          new_entity_id="products",
                          index="product_id",
                          additional_variables=["brand"])
