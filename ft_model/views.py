@@ -352,6 +352,7 @@ def get_results(request):
 # 函数selected_features用来处理特征选择提交后服务器响应的结果
 def selected_features(request):
     import re
+    import numpy as np
     selected = request.POST.getlist('selected')
     target_id = request.COOKIES['target_id']
     columns = list(selected)
@@ -378,6 +379,8 @@ def selected_features(request):
             if i is None:
                 return_list.append(None)
             if isinstance(i, str):
+                return_list.append(i)
+            if isinstance(i, np.bool_):
                 return_list.append(i)
             elif re.search(r"\.0\b", str(i)):
                 return_list.append(int(i))
