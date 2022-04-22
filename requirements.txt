@@ -1,4 +1,4 @@
-Django==2.2
+Django==2.2.28
 featuretools==0.6.1
 numpy==1.16.2
 pandas==0.24.2
